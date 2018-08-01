@@ -54,30 +54,77 @@ magnitude._
 ## A Proposal
 
 Let's address the above concerns by giving developers a well-lit path towards security boundaries we
-can defend. Developers can set a single token in an HTTP response header, perhaps:
+can defend. The browser can take control of the HTTP state it represents on the users' behalf by
+generating a unique 64-bit value for each secure origin the user visits. This token can be delivered
+to the origin as an HTTP request header:
 
-<pre><code>Sec-HTTP-State: token=*<i>base64-encoded-value-goes-here</i>*, delivery="same-site"</code></pre>
+<pre><code>Sec-HTTP-State: token=*<i>base64-encoded-value</i>*</code></pre>
 
-The user agent will deliver this token back to the server as an HTTP request header, perhaps:
+This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
 
-<pre><code>Sec-HTTP-State: token=*<i>base64-encoded-value-goes-here</i>*</code></pre>
+1.  The client controls the token's value, not the server.
 
-At a glance, this looks a lot like a cookie. The differences are almost entirely in the constraints
-applied. The token will:
+2.  The token will only be available to the network layer, not to JavaScript (including network-like
+    JavaScript, such as Service Workers).
 
-*   The token will be available only to the network layer, not to JavaScript (though Service Workers
-    might be a special case worth thinking about more deeply).
+3.  The user agent will generate only one 64-bit token per origin, and will only expose the token to
+    the origin for which it was generated.
 
-*   The user agent will store only one token per origin, and will limit the token's size to
-    something reasonable (perhaps 128 bytes, which covers the status quo's ~20th percentile, and
-    would be more than enough to hold a signed session identifier, plus a bit of metadata like a
-    timestamp).
+4.  Tokens will not be generated for, or delivered to, non-secure origins.
 
-*   The user agent will not store tokens at all for non-secure origins. 
+5.  Tokens will be delivered along with same-site requests by default.
 
-*   The token will be delivered only to same-site requests by default, with the option for
-    developers to explicitly tighten that scope to same-origin requests, or loosen it to
-    cross-site requests.
+6.  The token's lifetime is infinite by default.
+
+These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
+defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
+control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header. The
+following options come to mind:
+
+1.  Some servers will require cross-site access to their token. Other servers may wish to narrow the
+    delivery scope to same-origin requests. Either option could be specified by the server:
+
+    <pre><code>Sec-HTTP-State-Options: ..., delivery=cross-site, ...</code></pre>
+
+    or 
+
+    <pre><code>Sec-HTTP-State-Options: ..., delivery=same-origin, ...</code></pre>
+
+2.  Some servers will wish to limit the token's lifetime. We can allow them to set a TTL (in seconds):
+
+    <pre><code>Sec-HTTP-State-Options: ..., ttl=3600, ...</code></pre>
+
+    After the time expires, the token's value will be automatically reset. Servers may also wish to
+    explicitly trigger the token's reset (upon signout, for example). Setting a TTL of 0 will do the
+    trick:
+
+    <pre><code>Sec-HTTP-State-Options: ..., ttl=0, ...</code></pre>
+
+    In either case, currently-running pages can be notified of the user's state change in order to
+    perform cleanup actions. When a reset happens, the browser can post a message to the origin's
+    `BroadcastChannel` named `http-state-reset` (and perhaps wake up the origin's Service Worker
+    to respond to user-driven resets):
+
+    <pre><code>let resetChannel = new BroadcastChannel('http-state-reset')).;
+resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };</code></pre>
+
+3.  For some servers, the client-generated token will be enough to maintain state. They can treat
+    it as an opaque session identifier, and bind the user's state to it server-side. Other servers
+    will require additional assurance that they can trust the token's provenance. To that end,
+    servers can generate a unique key, associate it with the session identifier on the server, and
+    deliver it to the client via an HTTP response header:
+
+    <pre><code>Sec-HTTP-State-Options: ..., key=*<i>base64-encoded-key</i>*, ...</code></pre>
+
+    Clients will store that key, and use it to generate a signature over some set of data that
+    mitigates the risk of token capture:
+
+    <pre><code>Sec-HTTP-State: token=*<i>token</i>*, sig=*<i>HMAC-SHA265(key, token+metadata)</i>*</code></pre>
+
+    For instance, signing the entire request using the format that [Signed Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) have defined
+    could make it difficult indeed to use stolen tokens for anything but replay attacks. Including a
+    timestamp in the request might reduce that capability even further by reducing the window for
+    pure replay attacks.
 
 Coming back to the three prongs above, this proposal aims to create a state token whose
 configuration is hardened, maps to the same security primitive as the rest of the platform, reduces
@@ -88,6 +135,21 @@ the client-side cost of transport, and isn't useful for cross-site tracking by d
 The proposal described above seems pretty reasonable to me, but I see it as the start of a
 conversation. There are many variations that I hope we can explore together. In the hopes of kicking
 that off, here are some I've considered:
+
+### Server-controlled values?
+
+An earlier version of this proposal put the server in charge of the token's value, allowing
+developers to come up with a storage and verification scheme that makes sense for their application.
+While I've since come around to the idea that baking this mechanism more deeply into the platform is
+probably a good direction to explore, there's real value in allowing the server to map their
+existing authentication cookies onto a new transport mechanism in a reasonably straightforward way,
+and to design a signing/verification scheme that meets their needs. For example, the server could
+set the token directly via an HTTP response header:
+
+<pre><code>Sec-HTTP-State-Options: token*<i>base64-encoded-token</i>*</code></pre>
+
+That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
+previously.
 
 ### Just one token? Really?
 
@@ -104,21 +166,6 @@ of additional tokens. It also allows us to avoid the slippery slope from "Just o
 "Just ten more tokens!" that seems somehow inevietable. One token is simple to explain, simple to
 use, and simple (theoretically, though I recognize not practically) to deploy.
 
-### Server-controlled values?
-
-This proposal puts the server in charge of the token's value, allowing developers to come up with
-a storage and verification scheme that makes sense for their application. My intuition is that this
-is the right place to start, giving developers the flexibility to map their existing authentication
-cookies onto a new transport in a reasonably straightforward way, and to construct a
-signing/verification mechanism that meets their needs.
-
-That said, it might be interesting to explore an alternative in which the browser controls the value
-entirely, generating a random identifier when visiting an origin for the first time, or in response
-to something like `Sec-HTTP-State: token=0`. That concept has some interesting properties that are
-probably worth looking into more deeply. We might, for instance, be able to push more developers
-towards verifying signed values if we allowed them to set a key that browser would use to sign a
-random value rather than setting the value itself.
-
 ### Mere reflection?
 
 The current proposal follows in the footsteps of cookies, reflecting the server-set value back to
@@ -127,8 +174,7 @@ to tell developers, and fits well with how folks think things work today.
 
 That said, it might be interesting to explore more complicated relationships between the token's
 value, and the value that's delivered to servers in the HTTP request. You could imagine, for
-instance, sending a signed value including a timestamp and salt, padded out to a uniform length. Or
-incorporating some [Cake](https://tools.ietf.org/html/draft-abarth-cake-00)- or
+instance, incorporating some [Cake](https://tools.ietf.org/html/draft-abarth-cake-00)- or
 [Macaroon](https://ai.google/research/pubs/pub41892)-like HMACing to prove provenance. Or shifting
 more radically to an OAuth style model where the server sets a long-lived token which the browser
 exchanges on a regular basis for short-lived tokens.
@@ -144,7 +190,9 @@ No! Of course not! That would be silly! Ha! Who would propose such a thing?
 ### You would, Mike. You would.
 
 Ok, you got me. Cookies are bad and we should find a path towards deprecation. But that's going to
-take some time.
+take some time. This proposal aims to be an addition to the platform that will provide value even
+in the presence of cookies, giving us the ability to shift developers from one to the other
+incrementally.
 
 
 ### Is this new thing fundamentally different than a cookie?
@@ -169,12 +217,12 @@ pairs (though I expect healthy debate on that topic).
 ### How do you expect folks to migrate to this from cookies?
 
 Slowly and gradually. User agents could begin by advertising support for the new hotness, perhaps
-adding a `Sec-HTTP-State: ?` header to outgoing requests. Developers could begin using the new
-mechanism for pieces of their authentication infrastructure that would most benefit from
-origin-scoping, probably side-by-side with the existing cookie infrastructure. Over time, they
-could build up a list of the client-side state they're relying on, and begin to construct a
-server-side mapping between session identifiers and state. Once that mechanism was in place, state
-could migrate to it in a piecemeal fashion.
+adding a `Sec-HTTP-State: ?` header to outgoing requests, setting a value only after explicit reset.
+Developers could begin using the new mechanism for pieces of their authentication infrastructure
+that would most benefit from origin-scoping, side-by-side with the existing cookie infrastructure.
+Over time, they could build up a list of the client-side state they're relying on, and begin to
+construct a server-side mapping between session identifiers and state. Once that mechanism was in
+place, state could migrate to it in a piecemeal fashion.
 
 Eventually, you could imagine giving developers the ability to migrate completely, turning cookies
 off for their sites entirely (via Origin Manifests, for instance). Even more eventually, we could
@@ -188,6 +236,7 @@ applications to have more of a 1:1 relationship than they are today. There is no
 between applications on the same origin, and there doesn't seem to me to be much value in pretending
 that there is. Different applications ought to run on different origins, creating actual segregation
 between their capabilities.
+
 
 ### Does this proposal constitute a material change in privacy properties?
 
