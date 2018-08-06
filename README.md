@@ -146,7 +146,7 @@ existing authentication cookies onto a new transport mechanism in a reasonably s
 and to design a signing/verification scheme that meets their needs. For example, the server could
 set the token directly via an HTTP response header:
 
-<pre><code>Sec-HTTP-State-Options: token*<i>base64-encoded-token</i>*</code></pre>
+<pre><code>Sec-HTTP-State-Options: token=*<i>base64-encoded-token</i>*</code></pre>
 
 That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
 previously.
