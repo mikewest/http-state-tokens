@@ -1,5 +1,12 @@
 # Explainer: Tightening HTTP State Management
 
+Mike West, July 2018
+
+_©2018, Google, Inc. All rights reserved._
+
+(_Though this isn't a proposal that's well thought out, and stamped solidly with the Google Seal of
+Approval. It's a collection of interesting ideas for discussion, nothing more, nothing less._)
+
 ## A Problem
 
 Cookies allow the nominally stateless HTTP protocol to support stateful sessions, enabling practically
