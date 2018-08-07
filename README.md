@@ -245,6 +245,9 @@ Eventually, you could imagine giving developers the ability to migrate completel
 off for their sites entirely (via Origin Manifests, for instance). Even more eventually, we could
 ask developers to opt-into cookies rather than opting out.
 
+Browsers can encourage this migration by placing restrictions on cookies over time, along the lines
+of proposals like [cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad).
+
 
 ### Won't this migration be difficult for origins that host multiple apps?
 
