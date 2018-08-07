@@ -112,8 +112,10 @@ following options come to mind:
     `BroadcastChannel` named `http-state-reset` (and perhaps wake up the origin's Service Worker
     to respond to user-driven resets):
 
-    <pre><code>let resetChannel = new BroadcastChannel('http-state-reset')).;
-resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };</code></pre>
+    ```js
+    let resetChannel = new BroadcastChannel('http-state-reset'));
+    resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };
+    ```
 
 3.  For some servers, the client-generated token will be enough to maintain state. They can treat
     it as an opaque session identifier, and bind the user's state to it server-side. Other servers
