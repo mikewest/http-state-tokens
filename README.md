@@ -175,6 +175,13 @@ of additional tokens. It also allows us to avoid the slippery slope from "Just o
 "Just ten more tokens!" that seems somehow inevietable. One token is simple to explain, simple to
 use, and simple (theoretically, though I recognize not practically) to deploy.
 
+One counterpoint, however, is that it could be very valuable to distinguish tokens for specific
+purposes. Users and browsers would likely treat an "authentication" token differently from an
+"advertising and measurement" token, giving them different lifetimes and etc. Perhaps it
+would make sense to specify a small set of use cases that we'd like user agents to explicitly
+support.
+
+
 ### Mere reflection?
 
 The current proposal follows in the footsteps of cookies, reflecting the server-set value back to
