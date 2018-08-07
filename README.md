@@ -63,9 +63,13 @@ magnitude._
 Let's address the above concerns by giving developers a well-lit path towards security boundaries we
 can defend. The browser can take control of the HTTP state it represents on the users' behalf by
 generating a unique 64-bit value for each secure origin the user visits. This token can be delivered
-to the origin as an HTTP request header:
+to the origin as a [structured](https://tools.ietf.org/html/draft-ietf-httpbis-header-structure) HTTP
+request header:
 
-<pre><code>Sec-HTTP-State: token=*<i>base64-encoded-value</i>*</code></pre>
+```http
+Sec-HTTP-State: token=*AeQYkQ4Touk*
+```
+
 
 This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
 
@@ -91,21 +95,29 @@ following options come to mind:
 1.  Some servers will require cross-site access to their token. Other servers may wish to narrow the
     delivery scope to same-origin requests. Either option could be specified by the server:
 
-    <pre><code>Sec-HTTP-State-Options: ..., delivery=cross-site, ...</code></pre>
+    ```http
+    Sec-HTTP-State-Options: ..., delivery=cross-site, ...
+    ```
 
     or 
 
-    <pre><code>Sec-HTTP-State-Options: ..., delivery=same-origin, ...</code></pre>
+    ```http
+    Sec-HTTP-State-Options: ..., delivery=same-origin, ...
+    ```
 
 2.  Some servers will wish to limit the token's lifetime. We can allow them to set a TTL (in seconds):
 
-    <pre><code>Sec-HTTP-State-Options: ..., ttl=3600, ...</code></pre>
+    ```http
+    Sec-HTTP-State-Options: ..., ttl=3600, ...
+    ```
 
     After the time expires, the token's value will be automatically reset. Servers may also wish to
     explicitly trigger the token's reset (upon signout, for example). Setting a TTL of 0 will do the
     trick:
 
-    <pre><code>Sec-HTTP-State-Options: ..., ttl=0, ...</code></pre>
+    ```http
+    Sec-HTTP-State-Options: ..., ttl=0, ...
+    ```
 
     In either case, currently-running pages can be notified of the user's state change in order to
     perform cleanup actions. When a reset happens, the browser can post a message to the origin's
@@ -123,12 +135,16 @@ following options come to mind:
     servers can generate a unique key, associate it with the session identifier on the server, and
     deliver it to the client via an HTTP response header:
 
-    <pre><code>Sec-HTTP-State-Options: ..., key=*<i>base64-encoded-key</i>*, ...</code></pre>
+    ```http
+    Sec-HTTP-State-Options: ..., key=*ZH0GxtBMWA...nJudhZ8dtz*, ...
+    ```
 
     Clients will store that key, and use it to generate a signature over some set of data that
     mitigates the risk of token capture:
 
-    <pre><code>Sec-HTTP-State: token=*<i>token</i>*, sig=*<i>HMAC-SHA265(key, token+metadata)</i>*</code></pre>
+    ```http
+    Sec-HTTP-State: token=*AeQYkQ4Touk*, sig=*(HMAC-SHA265(key, token+metadata))*
+    ```
 
     For instance, signing the entire request using the format that [Signed Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) have defined
     could make it difficult indeed to use stolen tokens for anything but replay attacks. Including a
@@ -155,7 +171,9 @@ existing authentication cookies onto a new transport mechanism in a reasonably s
 and to design a signing/verification scheme that meets their needs. For example, the server could
 set the token directly via an HTTP response header:
 
-<pre><code>Sec-HTTP-State-Options: token=*<i>base64-encoded-token</i>*</code></pre>
+```http
+Sec-HTTP-State-Options: token=*ZH0GxtBMWAnJudhZ8dtz*
+```
 
 That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
 previously.
