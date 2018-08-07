@@ -202,9 +202,9 @@ support.
 
 ### Mere reflection?
 
-The current proposal follows in the footsteps of cookies, reflecting the server-set value back to
-the server on each request exactly as it was set. This seems like the most straightforward story
-to tell developers, and fits well with how folks think things work today.
+The current proposal follows in the footsteps of cookies, delivering the identifier unmodified to
+the server on every request. This seems like the most straightforward story to tell developers,
+and fits well with how folks think things work today.
 
 That said, it might be interesting to explore more complicated relationships between the token's
 value, and the value that's delivered to servers in the HTTP request. You could imagine, for
