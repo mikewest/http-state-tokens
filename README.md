@@ -74,7 +74,7 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 
 5.  Tokens will be delivered along with same-site requests by default.
 
-6.  The token's lifetime is infinite by default.
+6.  The token persists until it's reset by the server, user, or browser.
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
@@ -178,6 +178,14 @@ instance, incorporating some [Cake](https://tools.ietf.org/html/draft-abarth-cak
 [Macaroon](https://ai.google/research/pubs/pub41892)-like HMACing to prove provenance. Or shifting
 more radically to an OAuth style model where the server sets a long-lived token which the browser
 exchanges on a regular basis for short-lived tokens.
+
+### Opt-in?
+
+The current proposal suggests that the browser generate a token for newly visited origins by
+default, delivering it along with the initial request. It might be reasonable instead to send
+something like `Sec-HTTP-State: ?` to advertise the feature's presence, and allow the server to
+ask for a token by sending an appropriate options header (`Sec-HTTP-State-Options: generate`, or
+something similar).
 
 
 ## FAQ
