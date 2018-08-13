@@ -1,10 +1,10 @@
 # Explainer: Tightening HTTP State Management
 
-Mike West, July 2018
+Mike West, August 2018
 
 _©2018, Google, Inc. All rights reserved._
 
-(_Though this isn't a proposal that's well thought out, and stamped solidly with the Google Seal of
+(_Note: This isn't a proposal that's well thought out, and stamped solidly with the Google Seal of
 Approval. It's a collection of interesting ideas for discussion, nothing more, nothing less._)
 
 ## A Problem
@@ -69,7 +69,6 @@ request header:
 ```http
 Sec-HTTP-State: token=*AeQYkQ4Touk*
 ```
-
 
 This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
 
@@ -151,6 +150,10 @@ following options come to mind:
     timestamp in the request might reduce that capability even further by reducing the window for
     pure replay attacks.
 
+    _Note: This bit in particular is not baked. We need to review the work folks have done on things
+    like Token Binding to determine what the right threat model ought to be. Look at it as an area
+    to explore, not a solidly thought-out solution._
+
 Coming back to the three prongs above, this proposal aims to create a state token whose
 configuration is hardened, maps to the same security primitive as the rest of the platform, reduces
 the client-side cost of transport, and isn't useful for cross-site tracking by default.
@@ -209,9 +212,10 @@ and fits well with how folks think things work today.
 That said, it might be interesting to explore more complicated relationships between the token's
 value, and the value that's delivered to servers in the HTTP request. You could imagine, for
 instance, incorporating some [Cake](https://tools.ietf.org/html/draft-abarth-cake-00)- or
-[Macaroon](https://ai.google/research/pubs/pub41892)-like HMACing to prove provenance. Or shifting
-more radically to an OAuth style model where the server sets a long-lived token which the browser
-exchanges on a regular basis for short-lived tokens.
+[Macaroon](https://ai.google/research/pubs/pub41892)-like HMACing to indicate provenance or
+capability. Or shifting more radically to an OAuth style model where the server sets a long-lived
+token which the browser exchanges on a regular basis for short-lived tokens.
+
 
 ### Opt-in?
 
@@ -243,8 +247,8 @@ TL;DR: No. But yes!
 
 Developers can get almost all of the above properties by setting a cookie like
 `__Host-token=value1; Secure; HttpOnly; SameSite=Lax; path=/`. That isn't a perfect analog (it
-continues to ignore ports, for instance), but it's pretty good. My concern with the status is that
-developers need to understand the impact of the various flags and naming convention in order to
+continues to ignore ports, for instance), but it's pretty good. My concern with the status quo is
+that developers need to understand the impact of the various flags and naming convention in order to
 choose it over `Set-Cookie: token=value`. Defaults matter, deeply, and this seems like the simplest
 thing that could possibly work. It solidifies best practice into a thing-in-itself, rather than
 attempting to guide developers through the four attributes they must use, the one attribute they
@@ -252,14 +256,16 @@ must not use, and the weird naming convention they need to adopt.
 
 We also have the opportunity to reset the foundational assumption that server-side state is best
 maintained on the client. I'll blithly assert that it is both more elegant and more respectful of
-users' resources to migrate away towards small session identifiers, rather than oodles of key-value
-pairs (though I expect healthy debate on that topic).
+users' resources to migrate towards browser-controlled session identifiers, rather than oodles of
+key-value pairs set by the server (though I expect healthy debate on that topic).
 
 
 ### How do you expect folks to migrate to this from cookies?
 
-Slowly and gradually. User agents could begin by advertising support for the new hotness, perhaps
-adding a `Sec-HTTP-State: ?` header to outgoing requests, setting a value only after explicit reset.
+Slowly and gradually. User agents could begin by advertising support for the new hotness by
+appending a `Sec-HTTP-State` header to outgoing requests (either setting the value by default, or
+allowing developers to opt-in, as per the pivot point discussion above).
+
 Developers could begin using the new mechanism for pieces of their authentication infrastructure
 that would most benefit from origin-scoping, side-by-side with the existing cookie infrastructure.
 Over time, they could build up a list of the client-side state they're relying on, and begin to
@@ -270,17 +276,19 @@ Eventually, you could imagine giving developers the ability to migrate completel
 off for their sites entirely (via Origin Manifests, for instance). Even more eventually, we could
 ask developers to opt-into cookies rather than opting out.
 
-Browsers can encourage this migration by placing restrictions on cookies over time, along the lines
-of proposals like [cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad).
+At any point along that timeline, browsers can begin to encourage migration by placing restrictions
+on subsets of cookies, along the lines of proposals like
+[cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad).
 
 
 ### Won't this migration be difficult for origins that host multiple apps?
 
 Yes, it will. That seems like both a bug and a feature. It would be better for origins and
-applications to have more of a 1:1 relationship than they are today. There is no security boundary
+applications to have more of a 1:1 relationship than they have today. There is no security boundary
 between applications on the same origin, and there doesn't seem to me to be much value in pretending
-that there is. Different applications ought to run on different origins, creating actual segregation
-between their capabilities.
+that one exists (though perhaps we'll get there someday with a good story around
+[Suborigins](https://w3c.github.io/webappsec-suborigins/)). It is good to encourage different
+applications to run on different origins, creating actual segregation between their capabilities.
 
 
 ### Does this proposal constitute a material change in privacy properties?
