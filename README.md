@@ -20,16 +20,16 @@ reasonable security properties to developers who care, but adoption is low to no
 *   Cookies are available to JavaScript by default (via `document.cookie`), which enables a smooth
     upgrade from one-time XSS to theft of persistent credentials (and also makes cookies available
     to Spectre-like attacks on memory). Though the `HttpOnly` attribute was introduced well over a
-    decade ago, only ~8.65% of cookies use it today.
+    decade ago, only ~8.31% of `Sec-Cookie` operations use it today.
     
 *   Cookies are sent to non-secure origins by default, which enables trivial credential theft when
     you visit your local Evil But Delicious Coffee Shoppe™. The `Secure` attribute locks the cookie
-    to secure origins, which is good! Still, only ~7.37% of cookies set in Chrome use it today.
+    to secure origins, which is good! Still, only ~7.85% of `Set-Cookie` operations use it today.
 
 *   Cookies are often delivered without any indication of the request's initiator, meaning that a
     server's own requests look identical to requests initiated by your good friends at
-    `https://evil.com`. The `SameSite` attribute aims to mitigate the CSRF risk, but ~0.03% adoption
-    is not inspiring.
+    `https://evil.com`. The `SameSite` attribute aims to mitigate the CSRF risk, but the fact that
+    ~0.06% of `Set-Cookie` operations use it today is not inspiring.
     
 Poorly-adopted mitigation attributes to the side, cookies simply don't match the security boundaries
 we've decided to enforce for other kinds of web-accessible data. They flow across origins within a
@@ -45,15 +45,16 @@ limits, but they're all fairly high. Chrome, for example, allows ~180 cookies to
 registrable domain, which equates to ~724kB on disk. Happily(?), servers
 [generally explode](http://homakov.blogspot.de/2014/01/cookie-bomb-or-lets-break-internet.html) if
 that much data is sent in a request header. Abuse to the side, the practical overhead is huge: the
-median `Cookie` request header is 444 bytes (unzipped), while the 90th percentile is ~1kB, the 95th
-~2kB, and the 99th ~4kB (~0.1% are over 10kB, which is a lot).
+median (uncompressed) `Cookie` request header is 409 bytes, while the 90th percentile is 1,589
+bytes, the 95th 2,549 bytes, and the 99th 4,601 bytes (~0.1% of `Cookie` headers are over 10kB,
+which is a lot of kB).
 
 **Privacy**: Cookies enable pervasive monitoring on the one hand (which I'm hopeful we can
-address to some extent via mechanisms like those sketched out in
+address to some extent by deprecating them over HTTP via mechanisms like those sketched out in
 [cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad)), and
 not-entirely-pervasive tracking by entities that users might not know about on the other.
 
-_Note: All the metrics noted above come from Chrome's telemetry data for March, 2018. I'd welcome
+_Note: All the metrics noted above come from Chrome's telemetry data for July, 2018. I'd welcome
 similar measurements from other vendors, but I'm assuming they'll be within the same order of
 magnitude._
 
