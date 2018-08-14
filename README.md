@@ -63,12 +63,12 @@ magnitude._
 
 Let's address the above concerns by giving developers a well-lit path towards security boundaries we
 can defend. The browser can take control of the HTTP state it represents on the users' behalf by
-generating a unique 64-bit value for each secure origin the user visits. This token can be delivered
+generating a unique 256-bit value for each secure origin the user visits. This token can be delivered
 to the origin as a [structured](https://tools.ietf.org/html/draft-ietf-httpbis-header-structure) HTTP
 request header:
 
 ```http
-Sec-HTTP-State: token=*AeQYkQ4Touk*
+Sec-HTTP-State: token=*J6BRKagRIECKdpbDLxtlNzmjKo8MXTjyMomIwMFMonM*
 ```
 
 This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
@@ -78,7 +78,7 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 2.  The token will only be available to the network layer, not to JavaScript (including network-like
     JavaScript, such as Service Workers).
 
-3.  The user agent will generate only one 64-bit token per origin, and will only expose the token to
+3.  The user agent will generate only one 256-bit token per origin, and will only expose the token to
     the origin for which it was generated.
 
 4.  Tokens will not be generated for, or delivered to, non-secure origins.
@@ -143,7 +143,7 @@ following options come to mind:
     mitigates the risk of token capture:
 
     ```http
-    Sec-HTTP-State: token=*AeQYkQ4Touk*, sig=*(HMAC-SHA265(key, token+metadata))*
+    Sec-HTTP-State: token=*J6BRKa...MonM*, sig=*(HMAC-SHA265(key, token+metadata))*
     ```
 
     For instance, signing the entire request using the format that [Signed Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) have defined
@@ -176,7 +176,7 @@ and to design a signing/verification scheme that meets their needs. For example,
 set the token directly via an HTTP response header:
 
 ```http
-Sec-HTTP-State-Options: token=*ZH0GxtBMWAnJudhZ8dtz*
+Sec-HTTP-State-Options: token=*h3PkR1BwTyfAq6UOr...n6LlOPGSWGT3iBEF5CKes*
 ```
 
 That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
