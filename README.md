@@ -68,7 +68,7 @@ to the origin as a [structured](https://tools.ietf.org/html/draft-ietf-httpbis-h
 request header:
 
 ```http
-Sec-HTTP-State: token=*J6BRKagRIECKdpbDLxtlNzmjKo8MXTjyMomIwMFMonM*
+sec-http-state: token=*J6BRKagRIECKdpbDLxtlNzmjKo8MXTjyMomIwMFMonM*
 ```
 
 This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
@@ -89,26 +89,26 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
-control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header. The
+control points that can be triggered via a `sec-http-state-options` HTTP response header. The
 following options come to mind:
 
 1.  Some servers will require cross-site access to their token. Other servers may wish to narrow the
     delivery scope to same-origin requests. Either option could be specified by the server:
 
     ```http
-    Sec-HTTP-State-Options: ..., delivery=cross-site, ...
+    sec-http-state-options: ..., delivery=cross-site, ...
     ```
 
     or 
 
     ```http
-    Sec-HTTP-State-Options: ..., delivery=same-origin, ...
+    sec-http-state-options: ..., delivery=same-origin, ...
     ```
 
 2.  Some servers will wish to limit the token's lifetime. We can allow them to set a TTL (in seconds):
 
     ```http
-    Sec-HTTP-State-Options: ..., ttl=3600, ...
+    sec-http-state-options: ..., ttl=3600, ...
     ```
 
     After the time expires, the token's value will be automatically reset. Servers may also wish to
@@ -116,7 +116,7 @@ following options come to mind:
     trick:
 
     ```http
-    Sec-HTTP-State-Options: ..., ttl=0, ...
+    sec-http-state-options: ..., ttl=0, ...
     ```
 
     In either case, currently-running pages can be notified of the user's state change in order to
@@ -136,14 +136,14 @@ following options come to mind:
     deliver it to the client via an HTTP response header:
 
     ```http
-    Sec-HTTP-State-Options: ..., key=*ZH0GxtBMWA...nJudhZ8dtz*, ...
+    sec-http-state-options: ..., key=*ZH0GxtBMWA...nJudhZ8dtz*, ...
     ```
 
     Clients will store that key, and use it to generate a signature over some set of data that
     mitigates the risk of token capture:
 
     ```http
-    Sec-HTTP-State: token=*J6BRKa...MonM*, sig=*(HMAC-SHA265(key, token+metadata))*
+    sec-http-state: token=*J6BRKa...MonM*, sig=*(HMAC-SHA265(key, token+metadata))*
     ```
 
     For instance, signing the entire request using the format that [Signed Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) have defined
@@ -176,7 +176,7 @@ and to design a signing/verification scheme that meets their needs. For example,
 set the token directly via an HTTP response header:
 
 ```http
-Sec-HTTP-State-Options: token=*h3PkR1BwTyfAq6UOr...n6LlOPGSWGT3iBEF5CKes*
+sec-http-state-options: token=*h3PkR1BwTyfAq6UOr...n6LlOPGSWGT3iBEF5CKes*
 ```
 
 That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
@@ -222,8 +222,8 @@ token which the browser exchanges on a regular basis for short-lived tokens.
 
 The current proposal suggests that the browser generate a token for newly visited origins by
 default, delivering it along with the initial request. It might be reasonable instead to send
-something like `Sec-HTTP-State: ?` to advertise the feature's presence, and allow the server to
-ask for a token by sending an appropriate options header (`Sec-HTTP-State-Options: generate`, or
+something like `sec-http-state: ?` to advertise the feature's presence, and allow the server to
+ask for a token by sending an appropriate options header (`sec-http-state-options: generate`, or
 something similar).
 
 
@@ -264,7 +264,7 @@ key-value pairs set by the server (though I expect healthy debate on that topic)
 ### How do you expect folks to migrate to this from cookies?
 
 Slowly and gradually. User agents could begin by advertising support for the new hotness by
-appending a `Sec-HTTP-State` header to outgoing requests (either setting the value by default, or
+appending a `sec-http-state` header to outgoing requests (either setting the value by default, or
 allowing developers to opt-in, as per the pivot point discussion above).
 
 Developers could begin using the new mechanism for pieces of their authentication infrastructure
