@@ -20,7 +20,7 @@ reasonable security properties to developers who care, but adoption is low to no
 *   Cookies are available to JavaScript by default (via `document.cookie`), which enables a smooth
     upgrade from one-time XSS to theft of persistent credentials (and also makes cookies available
     to Spectre-like attacks on memory). Though the `HttpOnly` attribute was introduced well over a
-    decade ago, only ~8.31% of `Sec-Cookie` operations use it today.
+    decade ago, only ~8.31% of `Set-Cookie` operations use it today.
     
 *   Cookies are sent to non-secure origins by default, which enables trivial credential theft when
     you visit your local Evil But Delicious Coffee Shoppe™. The `Secure` attribute locks the cookie
