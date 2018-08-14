@@ -1,11 +1,15 @@
 # Explainer: Tightening HTTP State Management
 
-Mike West, August 2018
+forked from
 
-_©2018, Google, Inc. All rights reserved._
+[Mike West](https://github.com/mikewest/http-state-tokens), August 2018 to provide a pull request.
+
+_Copyright statements are so nineties_
 
 (_Note: This isn't a proposal that's well thought out, and stamped solidly with the Google Seal of
 Approval. It's a collection of interesting ideas for discussion, nothing more, nothing less._)
+
+(_Note: This is a pull request after fruitful discussions in Dagstuhl)
 
 ## A Problem
 
@@ -54,12 +58,20 @@ address to some extent by deprecating them over HTTP via mechanisms like those s
 [cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad)), and
 not-entirely-pervasive tracking by entities that users might not know about on the other.
 
+**Unkown Semantics**: One of the issues of the cookie identifiers is that their purpose is 
+opaque to users. Many attempts were made to remedy the situation or to distinguish between 
+good cookies and bad cookies. Namely, [P3P](https://www.w3.org/TR/P3P) tried to add 
+semantics to data collection. In this case, the server side was creating the identifier 
+to maintain state and explained the meaning in a P3P policy. P3P did not find wide adoption 
+in practice, but influenced research quite significantly. 
+
 _Note: All the metrics noted above come from Chrome's telemetry data for July, 2018. I'd welcome
 similar measurements from other vendors, but I'm assuming they'll be within the same order of
 magnitude._
 
 
 ## A Proposal
+
 
 Let's address the above concerns by giving developers a well-lit path towards security boundaries we
 can defend. The browser can take control of the HTTP state it represents on the users' behalf by
@@ -68,12 +80,12 @@ to the origin as a [structured](https://tools.ietf.org/html/draft-ietf-httpbis-h
 request header:
 
 ```http
-Sec-HTTP-State: token=*AeQYkQ4Touk*
+Sec-HTTP-State: token=*AeQYkQ4Touk* purpose=*authentication*
 ```
 
 This identifier acts more or less like a client-controlled cookie, with a few notable distinctions:
 
-1.  The client controls the token's value, not the server.
+1.  The client controls the token's value, not the server. 
 
 2.  The token will only be available to the network layer, not to JavaScript (including network-like
     JavaScript, such as Service Workers).
@@ -87,8 +99,21 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 
 6.  The token persists until it's reset by the server, user, or browser.
 
+7.  The token will have fixed semantics attached to it and identified in purpose-field. 
+    A browser can generate a new token for a new purpose. This may include permission
+    or prohibition of cross-origin sharing via backend channels.
+
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
-defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
+defaults. The major difference to classic cookies is that the browser mints the identifiers and controls
+the purpose of the identifier with an additional field. This way, a browser may distinguish between 
+desirable and undesirable uses of the identifier it provides. 
+
+In unregulated environments, there is no difference. In regulated environments, 
+data protection rules may help to enforce the purpose limitation set with the identifier. 
+This may sound restrictive, but it would be a way to avoid the browser-generated identifier 
+running into the same issues and bad reputation we see for cookies.
+
+For folks for whom these defaults aren't good enough, we'll provide developers with a few
 control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header. The
 following options come to mind:
 
@@ -103,7 +128,7 @@ following options come to mind:
 
     ```http
     Sec-HTTP-State-Options: ..., delivery=same-origin, ...
-    ```
+    
 
 2.  Some servers will wish to limit the token's lifetime. We can allow them to set a TTL (in seconds):
 
@@ -155,6 +180,23 @@ following options come to mind:
     like Token Binding to determine what the right threat model ought to be. Look at it as an area
     to explore, not a solidly thought-out solution._
 
+4.  A token may be limited not only in its delivery scope (cross-site vs origin only), but may also be 
+    limited in the purpose it is used for in a stateful system. This should be limited to the options 
+    given by a specification with an extension mechanism. 
+    
+    ```http
+    Sec-HTTP-State-Options: ..., purpose=authentication, measurement, ...
+    ```
+    Given the fact that the number of potential purposes is infinite, an extension mechanism is needed to 
+    allow for quick evolution between standardization efforts. The initiative for such an extension 
+    should come from the server side. Wanting state after a first stateless interaction, the server 
+    would request a number with an extended purpose string. The browser could present such a new purpose to 
+    the user in a notification and send the string below once the user agrees.
+    
+    ```http
+    Sec-HTTP-State-Options: ..., purpex=delivery, backgroundsync, cloudsync, ...
+    ```
+
 Coming back to the three prongs above, this proposal aims to create a state token whose
 configuration is hardened, maps to the same security primitive as the rest of the platform, reduces
 the client-side cost of transport, and isn't useful for cross-site tracking by default.
@@ -182,7 +224,7 @@ Sec-HTTP-State-Options: token=*ZH0GxtBMWAnJudhZ8dtz*
 That still might be a reasonable option to allow, but I'm less enthusiastic about it than I was
 previously.
 
-### Just one token? Really?
+### A new world of browser controlled tokens does not replace cookies, but makes things that matter reliable
 
 An early variant of the proposal was built around setting two tokens: one sent with all requests,
 and one which behaved like a cookie set with `SameSite=Strict`. Clever folks suggested adding
@@ -201,7 +243,9 @@ One counterpoint, however, is that it could be very valuable to distinguish toke
 purposes. Users and browsers would likely treat an "authentication" token differently from an
 "advertising and measurement" token, giving them different lifetimes and etc. Perhaps it
 would make sense to specify a small set of use cases that we'd like user agents to explicitly
-support.
+support. The important thing to remember is that adding semantics to the token should start 
+with very easy and consistent use cases like `purpose=authentication` to avoid a large scope 
+that would renew the known deficiencies and abuses of cookies as generic opaque identifiers.
 
 
 ### Mere reflection?
@@ -226,6 +270,10 @@ something like `Sec-HTTP-State: ?` to advertise the feature's presence, and allo
 ask for a token by sending an appropriate options header (`Sec-HTTP-State-Options: generate`, or
 something similar).
 
+For privacy preservation, the browser would do a stateless default in private browsing mode and 
+send an authentication identifier in normal browsing with the option of the server to ask for 
+more tokens and different purposes after the first roundtrip. 
+
 
 ## FAQ
 
@@ -241,10 +289,17 @@ take some time. This proposal aims to be an addition to the platform that will p
 in the presence of cookies, giving us the ability to shift developers from one to the other
 incrementally.
 
+The proposal has the potential to kill cookies, but it should be very specific in the first 
+place to make reliable, resilient tokens that are harder to abuse than cookies. Over time, cookies 
+will be mostly used in edge cases where the browser token would be too complex to obtain. 
+
 
 ### Is this new thing fundamentally different than a cookie?
 
-TL;DR: No. But yes!
+Definitely! It changes the relations between the service and the user using the user agent. 
+It allows the user agent to change the token, maintain state and be aware of the token used. 
+Cookies are opaque to the user agent. Tokens may be abused, but remain under the control 
+of the user agent. It doesn't change developing fundamentally though.
 
 Developers can get almost all of the above properties by setting a cookie like
 `__Host-token=value1; Secure; HttpOnly; SameSite=Lax; path=/`. That isn't a perfect analog (it
@@ -265,7 +320,12 @@ key-value pairs set by the server (though I expect healthy debate on that topic)
 
 Slowly and gradually. User agents could begin by advertising support for the new hotness by
 appending a `Sec-HTTP-State` header to outgoing requests (either setting the value by default, or
-allowing developers to opt-in, as per the pivot point discussion above).
+allowing developers to opt-in, as per the pivot point discussion above). 
+
+If tokens are introduced for a specific purpose only and targeted to a specific audience and if 
+legal sanctions are possible when abusing the token, chances are not neglectable that a resilient 
+identifier for a more comfortable browsing experience will emerge. Additionally, the fact that the 
+browser controls the token makes it easier for the user agent to be more privacy protective.
 
 Developers could begin using the new mechanism for pieces of their authentication infrastructure
 that would most benefit from origin-scoping, side-by-side with the existing cookie infrastructure.
@@ -294,15 +354,18 @@ applications to run on different origins, creating actual segregation between th
 
 ### Does this proposal constitute a material change in privacy properties?
 
-Yes and no. Mostly no. That is, folks can still use these tokens to track users across origins, just
+Yes and no. Mostly yes. That is, folks can still use these tokens to track users across origins, just
 as they can with cookies today. There's a trivial hurdle insofar as folks would need to declare that
 intent by setting the token's `delivery` member, and it's reasonable to expect user agents to react
 to that declaration in some interesting ways, but in itself, there's little change in technical
-capability.
+capability. 
 
 Still, it has some advantages over the status quo. For example, these tokens can never be sent in
 plaintext, which mitigates some risk of pervasive monitoring. Also, reasonable length and character
 limitations restrict the amount of data which can be contained directly in the token, tilting the
 field towards opaque identifiers linked to server-side state, as opposed to caching sensitive
 information locally and exposing on the local disk, as well as to all the TLS-terminating endpoints
-between you and the service you care about.
+between you and the service you care about. Additionally, in regulated environments, control by 
+the user and appropriate semantics will allow rogue services to be pursued. The reduced semantics 
+of specific tokens avoid scope creep by cloudy privacy statements. The services using cloudy 
+statements are forced to continue to use cookies.
