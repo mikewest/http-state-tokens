@@ -62,7 +62,7 @@ magnitude._
 ## A Proposal
 
 Let's address the above concerns by giving developers a well-lit path towards security boundaries we
-can defend. The browser can take control of the HTTP state it represents on the users' behalf by
+can defend. The user agent can take control of the HTTP state it represents on the users' behalf by
 generating a unique 256-bit value for each secure origin the user visits. This token can be delivered
 to the origin as a [structured](https://tools.ietf.org/html/draft-ietf-httpbis-header-structure) HTTP
 request header:
@@ -85,7 +85,7 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 
 5.  Tokens will be delivered along with same-site requests by default.
 
-6.  The token persists until it's reset by the server, user, or browser.
+6.  The token persists until it's reset by the server, user, or user agent.
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
@@ -120,7 +120,7 @@ following options come to mind:
     ```
 
     In either case, currently-running pages can be notified of the user's state change in order to
-    perform cleanup actions. When a reset happens, the browser can post a message to the origin's
+    perform cleanup actions. When a reset happens, the user agent can post a message to the origin's
     `BroadcastChannel` named `http-state-reset` (and perhaps wake up the origin's Service Worker
     to respond to user-driven resets):
 
@@ -198,7 +198,7 @@ of additional tokens. It also allows us to avoid the slippery slope from "Just o
 use, and simple (theoretically, though I recognize not practically) to deploy.
 
 One counterpoint, however, is that it could be very valuable to distinguish tokens for specific
-purposes. Users and browsers would likely treat an "authentication" token differently from an
+purposes. Users and user agents would likely treat an "authentication" token differently from an
 "advertising and measurement" token, giving them different lifetimes and etc. Perhaps it
 would make sense to specify a small set of use cases that we'd like user agents to explicitly
 support.
@@ -215,12 +215,12 @@ value, and the value that's delivered to servers in the HTTP request. You could 
 instance, incorporating some [Cake](https://tools.ietf.org/html/draft-abarth-cake-00)- or
 [Macaroon](https://ai.google/research/pubs/pub41892)-like HMACing to indicate provenance or
 capability. Or shifting more radically to an OAuth style model where the server sets a long-lived
-token which the browser exchanges on a regular basis for short-lived tokens.
+token which the user agent exchanges on a regular basis for short-lived tokens.
 
 
 ### Opt-in?
 
-The current proposal suggests that the browser generate a token for newly visited origins by
+The current proposal suggests that the user agent generate a token for newly visited origins by
 default, delivering it along with the initial request. It might be reasonable instead to send
 something like `Sec-HTTP-State: ?` to advertise the feature's presence, and allow the server to
 ask for a token by sending an appropriate options header (`Sec-HTTP-State-Options: generate`, or
@@ -257,7 +257,7 @@ must not use, and the weird naming convention they need to adopt.
 
 We also have the opportunity to reset the foundational assumption that server-side state is best
 maintained on the client. I'll blithly assert that it is both more elegant and more respectful of
-users' resources to migrate towards browser-controlled session identifiers, rather than oodles of
+users' resources to migrate towards user-agent-controlled session identifiers, rather than oodles of
 key-value pairs set by the server (though I expect healthy debate on that topic).
 
 
@@ -277,7 +277,7 @@ Eventually, you could imagine giving developers the ability to migrate completel
 off for their sites entirely (via Origin Manifests, for instance). Even more eventually, we could
 ask developers to opt-into cookies rather than opting out.
 
-At any point along that timeline, browsers can begin to encourage migration by placing restrictions
+At any point along that timeline, user agents can begin to encourage migration by placing restrictions
 on subsets of cookies, along the lines of proposals like
 [cookies-over-http-bad](https://github.com/mikewest/cookies-over-http-bad).
 
