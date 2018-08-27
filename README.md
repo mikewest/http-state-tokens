@@ -300,9 +300,16 @@ intent by setting the token's `delivery` member, and it's reasonable to expect u
 to that declaration in some interesting ways, but in itself, there's little change in technical
 capability.
 
-Still, it has some advantages over the status quo. For example, these tokens can never be sent in
-plaintext, which mitigates some risk of pervasive monitoring. Also, reasonable length and character
-limitations restrict the amount of data which can be contained directly in the token, tilting the
-field towards opaque identifiers linked to server-side state, as opposed to caching sensitive
-information locally and exposing on the local disk, as well as to all the TLS-terminating endpoints
-between you and the service you care about.
+Still, it has some advantages over the status quo. For example:
+
+1.  These tokens can never be sent in plaintext, which mitigates some risk of pervasive monitoring.
+2.  The user agent controls the token's value, which reduces the risk that the server could store
+    sensitive information on the user's machine in a way that would be continually exposed on the
+    local disk, as well as to all the TLS-terminating endpoints between you and the service you
+    care about.
+3.  The default `delivery` option would restrict tokens to same-site requests. Assuming we follow
+    the `SameSite` cookie precedent by only accepting options to be changed on requests that would
+    send the token, cross-site tokens would only be available to a given origin after the user
+    visited that origin in a same-site context, and it explicitly declared its token as being
+    deliverable cross-site (at which point the user agent could make some decisions about how to
+    handle that declaration).
