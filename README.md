@@ -313,3 +313,10 @@ Still, it has some advantages over the status quo. For example:
     visited that origin in a same-site context, and it explicitly declared its token as being
     deliverable cross-site (at which point the user agent could make some decisions about how to
     handle that declaration).
+
+
+### What kinds of user control would user agents provide?
+
+Users must always have the ability to opt-out of sending this token to any entity, just as they do
+with cookies today. User agents should likely aim above that bar, but an opt-out seems like the bare
+minimum we could reasonably accept.
