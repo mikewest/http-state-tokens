@@ -29,7 +29,9 @@ author:
     uri: https://www.mikewest.org/
 
 normative:
+  I-D.ietf-httpbis-header-structure:
   RFC2119:
+  RFC4648:
   Fetch:
     target: https://fetch.spec.whatwg.org/
     title: Fetch
@@ -43,7 +45,7 @@ informative:
   RFC2109:
   RFC6265:
   I-D.ietf-httpbis-rfc6265bis:
-  I-D.ietf-httpbis-header-structure:
+  I-D.abarth-cake:
   StateTokenExplainer:
     target: https://github.com/mikewest/http-state-tokens
     title: "Explainer: Tightening HTTP State Management"
@@ -57,7 +59,7 @@ informative:
 
 This document describes a mechanism which allows HTTP servers to maintain stateful sessions with
 HTTP user agents. It aims to address some of the security and privacy considerations which have
-been identified in existing state management mechanims, providing developers with a well-lit path
+been identified in existing state management mechanisms, providing developers with a well-lit path
 towards our current understanding of best practice.
 
 --- middle
@@ -66,29 +68,64 @@ towards our current understanding of best practice.
 
 Cookies {{RFC6265}} allow the nominally stateless HTTP protocol to support stateful sessions,
 enabling practically everything interesting on the web today. That said, cookies have some issues:
-they're hard to use securely, they waste users' resources, and they enable tracking users' activity
-across the web in potentially surprising ways.
+they're hard to use securely, they add substantial weight to users' outgoing requests, and they
+enable tracking users' activity across the web in potentially surprising ways.
 
-TODO(mkwst): Add an introduction.
+This document proposes an alternative state management mechanism that aims to provide the bare
+minimum required for state management: each user agent generates a single token, bound to a single
+origin, and delivers it as a header in requests to that origin.
 
-## Requirements Language
+TODO(mkwst): Flesh out an introduction.
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD",
-"SHOULD NOT", "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this
-document are to be interpreted as described in RFC 2119 {{!RFC2119}}.
+## Examples
 
-## Notational Conventions
+User agents can deliver HTTP state tokens to a server in a `Sec-Http-State` header. For example,
+if a user agent has generated a token bound to `https://example.com/` whose base64 encoding is
+`hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=` ({{RFC4648}}, Section 4), then it would generate the
+following header when delivering the token along with requests to `https://example.com/`:
+
+~~~
+Sec-Http-State: token=*hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=*
+~~~
+
+The server can control certain aspects of the token's delivery by responding to requests with a
+`Sec-Http-State-Options` header.
+
+# Conventions
+
+## Conformance
 
 The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
 "RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
 described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
 shown here.
 
+## Syntax
+
 This document defines two Structured Headers {{!I-D.ietf-httpbis-header-structure}}. In doing so it
 relies upon the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}} and the OWS rule from
 {{!RFC7230}}.
 
 # HTTP State Management
+
+## Infrastructure
+
+### HTTP State Tokens
+
+An HTTP State Token is a set of information maintained by a user agent to represent a stateful
+session with a specific origin.
+
+HTTP State Tokens have an associated `value`, which contains up to 256-bits of binary data.
+
+HTTP State Tokens have an associated `key`, which is either empty, or contains up to 256-bits of
+binary data.
+
+### Token Storage
+
+User agents store HTTP State Tokens in an internal Token Store, which maps origins to HTTP State
+Tokens in a 1:1 relationship.
+
+The Token Store can store, retrieve, and remove a given origin's HTTP State Token.
 
 ## Syntax
 
@@ -126,17 +163,49 @@ TODO
 User agents deliver HTTP state tokens to servers by appending a `Sec-Http-State` header field to
 outgoing requests. 
 
-This specification provides algorithms which are called at the appropriate points
-in {{Fetch}} in order to 
+This specification provides algorithms which are called at the appropriate points in {{Fetch}} in
+order to attach `Sec-Http-State` headers to outgoing requests, and to ensure that
+`Sec-Http-State-Options` headers are correctly processed.
 
-In order to deliver an HTTP state token to a server, it 
+## Attach HTTP State Tokens to a request
 
-## Attach an HTTP state token 
+The user agent can attach HTTP State Tokens to a request using an algorithm equivalent to the
+following:
 
+1.  If the user agent is configured to block cookies for the request, skip the remaining steps in
+    this algorithm, and return without modifying the request.
+
+2.  Let `request-origin` be the origin of `request`'s current URL.
+
+3.  Let `request-token` be the result of retrieving origin's token from the user agent's token
+    store, or `null` if no such token exists.
+
+4.  Let `serialized-token` be the empty string.
+
+5.  Let `serialized-signature` be the empty string.
+
+6.  If `request-token` is not `null`:
+
+    1.  Set `serialized-token` to the base64 encoding ({{!RFC4648}}, Section 4) of
+        `request-token`'s value.
+
+    2.  If `request-token`'s `key` is present:
+
+        1.  Set serialized-signature to the result of executing {{sign}} on request.
+
+7.  Let `header-value` be a Structured Header whose value is a dictionary.
+
+8.  Insert a member into `header-value` whose key is `token`, and whose value is `serialized-token`.
+
+9.  If `serialized-signature` is not empty, then insert a member into `header-value` whose key is
+    `sig`, and whose value is `serialized-signature`.
+
+10. Append a header to `request`'s header list whose name is `Sec-Http-State`, and whose value is
+    the result of serializing `header-value` ({{I-D.ietf-httpbis-header-structure}}, Section 4.1).
+  
 ## Generate a request's signature {#sign}
 
 TODO.
-
 
 
 # IANA Considerations
@@ -201,50 +270,17 @@ Related information:
 
 # Security Considerations
 
-The size of most types defined by Structured Headers is not limited; as a result, extremely large header fields could be an attack vector (e.g., for resource consumption). Most HTTP implementations limit the sizes of size of individual header fields as well as the overall header block size to mitigate such attacks.
+TODO
 
-It is possible for parties with the ability to inject new HTTP header fields to change the meaning
-of a Structured Header. In some circumstances, this will cause parsing to fail, but it is not possible to reliably fail in all such circumstances.
+# Privacy Considerations
+
+TODO
 
 --- back
 
+# Acknowledgements
 
-# Frequently Asked Questions {#faq}
-
-## Why not JSON?
-
-Earlier proposals for structured headers were based upon JSON {{?RFC8259}}. However, constraining its use to make it suitable for HTTP header fields required senders and recipients to implement specific additional handling.
-
-For example, JSON has specification issues around large numbers and objects with duplicate members. Although advice for avoiding these issues is available (e.g., {{?RFC7493}}), it cannot be relied upon.
-
-Likewise, JSON strings are by default Unicode strings, which have a number of potential interoperability issues (e.g., in comparison). Although implementers can be advised to avoid non-ASCII content where unnecessary, this is difficult to enforce.
-
-Another example is JSON's ability to nest content to arbitrary depths. Since the resulting memory commitment might be unsuitable (e.g., in embedded and other limited server deployments), it's necessary to limit it in some fashion; however, existing JSON implementations have no such limits, and even if a limit is specified, it's likely that some header field definition will find a need to violate it.
-
-Because of JSON's broad adoption and implementation, it is difficult to impose such additional constraints across all implementations; some deployments would fail to enforce them, thereby harming interoperability.
-
-Since a major goal for Structured Headers is to improve interoperability and simplify implementation, these concerns led to a format that requires a dedicated parser and serialiser.
-
-Additionally, there were widely shared feelings that JSON doesn't "look right" in HTTP headers.
-
-## Structured Headers don't "fit" my data.
-
-Structured headers intentionally limits the complexity of data structures, to assure that it can be processed in a performant manner with little overhead. This means that work is necessary to fit some data types into them.
-
-Sometimes, this can be achieved by creating limited substructures in values, and/or using more than one header. For example, consider:
-
-~~~
-Example-Thing: name="Widget", cost=89.2, descriptions="foo bar"
-Example-Description: foo; url="https://example.net"; context=123,
-                     bar; url="https://example.org"; context=456
-~~~
-
-Since the description contains a list of key/value pairs, we use a Parameterised List to represent them, with the identifier for each item in the list used to identify it in the "descriptions" member of the Example-Thing header.
-
-When specifying more than one header, it's important to remember to describe what a processor's behaviour should be when one of the headers is missing.
-
-If you need to fit arbitrarily complex data into a header, Structured Headers is probably a poor fit for your use case.
-
+This document owes much to Adam Barth's {{I-D.abarth-cake}}.
 
 # Changes
 
