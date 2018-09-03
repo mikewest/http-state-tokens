@@ -30,8 +30,11 @@ author:
 
 normative:
   I-D.ietf-httpbis-header-structure:
+  I-D.yasskin-http-origin-signed-responses:
+  RFC2104:
   RFC2119:
   RFC4648:
+  RFC7049:
   Fetch:
     target: https://fetch.spec.whatwg.org/
     title: Fetch
@@ -46,6 +49,7 @@ informative:
   RFC6265:
   I-D.ietf-httpbis-rfc6265bis:
   I-D.abarth-cake:
+  I-D.ietf-cbor-cddl:
   StateTokenExplainer:
     target: https://github.com/mikewest/http-state-tokens
     title: "Explainer: Tightening HTTP State Management"
@@ -112,20 +116,36 @@ relies upon the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}} and t
 
 ### HTTP State Tokens
 
-An HTTP State Token is a set of information maintained by a user agent to represent a stateful
-session with a specific origin.
+An HTTP State Token holds information which allows a user agent to maintain a stateful session with
+a specific origin. HTTP State Tokens have a number of associated properties:
 
-HTTP State Tokens have an associated `value`, which contains up to 256-bits of binary data.
+*   `delivery` controls the scopes from which the token can be delivered. It is an enum of either
+    `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, it is `same-site`.
 
-HTTP State Tokens have an associated `key`, which is either empty, or contains up to 256-bits of
-binary data.
+*   `expiration` is a timestamp representing the point at which the token will be reset. Unless
+    otherwise specified, it is the maximum date the user agent can represent.
+
+*   `key` is a server-provided key which can be used to sign requests with which the token is
+    delivered. It is either empty, or contains up to 256-bits of binary data. Unless otherwise
+    specified, it is empty.
+
+*   `value` is the token's value (surprising, right?). It contains up to 256-bits of binary data.
 
 ### Token Storage
 
-User agents store HTTP State Tokens in an internal Token Store, which maps origins to HTTP State
-Tokens in a 1:1 relationship.
+User agents MUST keep a list of all the unexpired HTTP State Tokens which have been created. For the
+purposes of this document, we'll assume that user agents keep this list in the form of a map whose
+keys are origins, and whose values are HTTP State Tokens. 
 
-The Token Store can store, retrieve, and remove a given origin's HTTP State Token.
+This map exposes three functions:
+
+*   An HTTP State Token can be stored for a given origin. If the origin already exists in the map,
+    the entry's value will be overwritten with the new HTTP State Token.
+
+*   An origin's HTTP State Token can be retrieved. If the origin does not exist in the map, `null`
+    will be returned instead.
+
+*   An origin (along with its HTTP State Token) can be deleted from the map.
 
 ## Syntax
 
@@ -186,12 +206,15 @@ following:
 
 6.  If `request-token` is not `null`:
 
-    1.  Set `serialized-token` to the base64 encoding ({{!RFC4648}}, Section 4) of
+    1.  TODO: Something something `delivery` options.
+
+    2.  Set `serialized-token` to the base64 encoding ({{!RFC4648}}, Section 4) of
         `request-token`'s value.
 
-    2.  If `request-token`'s `key` is present:
+    3.  If `request-token`'s `key` is present:
 
-        1.  Set serialized-signature to the result of executing {{sign}} on request.
+        1.  Set `serialized-signature` to the result of executing {{sign}} on request,
+            `serialized-token`, and `request-token`'s `key`.
 
 7.  Let `header-value` be a Structured Header whose value is a dictionary.
 
@@ -205,8 +228,52 @@ following:
   
 ## Generate a request's signature {#sign}
 
-TODO.
+If the origin server provides a `key`, the user agent will use it to sign any outgoing requests
+which target that origin and include an HTTP State Token. Note that the signature is produced
+before adding the `Sec-Http-State` header to the request.
 
+Given a request, a base64-encoded token value, and a key:
+
+1.  Let `cbor-request` be the result of building a CBOR representation {{!RFC7409}} of the given
+    request, as specified in the first element of the array described in Section 3.2 of
+    {{I-D.yasskin-http-origin-signed-responses}}.
+
+2.  Add an item to `cbor-request` which maps the byte string ':token' to the byte string containing
+    the given base64-encoded token value.
+
+3.  Let `cbor-serialization` be the canonical CBOR serialization of `cbor-request`, as defined in
+    Section 3.4 of {{I-D.yasskin-http-origin-signed-responses}}.
+
+4.  Return the result of computing HMAC-SHA256 over `cbor-serialization`, using the given `key`
+    {{!RFC2104}}.
+
+### Example
+
+The following request:
+
+~~~
+GET / HTTP/1.1
+Host: example.com
+Accept: */*
+~~~
+
+results in the following CBOR representation (represented using the extended diagnostic notation
+from Appendix G of {{I-D.ietf-cbor-cddl}}):
+
+~~~
+{
+  ':url': 'https://example.com/',
+  'accept': '*/*',
+  ':method': 'GET',
+  ':token': 'hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k='
+}
+~~~
+
+Given the secret key 'sekrit', this results in the following signature:
+
+~~~
+TODO. Calculate this.
+~~~
 
 # IANA Considerations
 
