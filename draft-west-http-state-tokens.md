@@ -34,7 +34,6 @@ normative:
   RFC2104:
   RFC2119:
   RFC4648:
-  RFC7049:
   Fetch:
     target: https://fetch.spec.whatwg.org/
     title: Fetch
@@ -45,19 +44,10 @@ normative:
       organization: Mozilla
 
 informative:
-  RFC2109:
   RFC6265:
   I-D.ietf-httpbis-rfc6265bis:
   I-D.abarth-cake:
   I-D.ietf-cbor-cddl:
-  StateTokenExplainer:
-    target: https://github.com/mikewest/http-state-tokens
-    title: "Explainer: Tightening HTTP State Management"
-    author:
-    -
-      ins: M. West
-      name: Mike West
-    date: 2018
 
 --- abstract
 
@@ -99,10 +89,7 @@ The server can control certain aspects of the token's delivery by responding to 
 
 ## Conformance
 
-The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "SHOULD NOT",
-"RECOMMENDED", "NOT RECOMMENDED", "MAY", and "OPTIONAL" in this document are to be interpreted as
-described in BCP 14 {{!RFC2119}} {{!RFC8174}} when, and only when, they appear in all capitals, as
-shown here.
+{::boilerplate bcp14}
 
 ## Syntax
 
@@ -119,7 +106,7 @@ relies upon the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}} and t
 An HTTP State Token holds information which allows a user agent to maintain a stateful session with
 a specific origin. HTTP State Tokens have a number of associated properties:
 
-*   `delivery` controls the scopes from which the token can be delivered. It is an enum of either
+*   `scope` controls the scopes from which the token can be delivered. It is an enum of either
     `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, it is `same-site`.
 
 *   `expiration` is a timestamp representing the point at which the token will be reset. Unless
@@ -189,13 +176,13 @@ order to attach `Sec-Http-State` headers to outgoing requests, and to ensure tha
 
 ## Attach HTTP State Tokens to a request
 
-The user agent can attach HTTP State Tokens to a request using an algorithm equivalent to the
+The user agent can attach HTTP State Tokens to a given request using an algorithm equivalent to the
 following:
 
 1.  If the user agent is configured to block cookies for the request, skip the remaining steps in
     this algorithm, and return without modifying the request.
 
-2.  Let `request-origin` be the origin of `request`'s current URL.
+2.  Let `target-origin` be the origin of `request`'s current URL.
 
 3.  Let `request-token` be the result of retrieving origin's token from the user agent's token
     store, or `null` if no such token exists.
@@ -204,9 +191,17 @@ following:
 
 5.  Let `serialized-signature` be the empty string.
 
-6.  If `request-token` is not `null`:
+6.  Let `header-value` be a Structured Header whose value is a dictionary.
 
-    1.  TODO: Something something `delivery` options.
+7.  If `request-token` is not `null`:
+
+    1.  If `request-token`'s `scope` is `same-origin` and `target-origin` is not same origin with
+        `request`'s origin, or if `request-token`'s `scope` is `same-site` and `target-origin`'s
+        registrable domain is not the same as `request`'s origin's registrable domain, then skip
+        the remaining substeps.
+
+        ISSUE: Perhaps we should add some sort of `out-of-scope` token to the header in this case?
+        Or note that folks should look at `Sec-Metadata`?
 
     2.  Set `serialized-token` to the base64 encoding ({{!RFC4648}}, Section 4) of
         `request-token`'s value.
@@ -215,8 +210,6 @@ following:
 
         1.  Set `serialized-signature` to the result of executing {{sign}} on request,
             `serialized-token`, and `request-token`'s `key`.
-
-7.  Let `header-value` be a Structured Header whose value is a dictionary.
 
 8.  Insert a member into `header-value` whose key is `token`, and whose value is `serialized-token`.
 
@@ -240,12 +233,10 @@ Given a request, a base64-encoded token value, and a key:
 
 2.  Add an item to `cbor-request` which maps the byte string ':token' to the byte string containing
     the given base64-encoded token value.
-
-3.  Let `cbor-serialization` be the canonical CBOR serialization of `cbor-request`, as defined in
-    Section 3.4 of {{I-D.yasskin-http-origin-signed-responses}}.
-
-4.  Return the result of computing HMAC-SHA256 over `cbor-serialization`, using the given `key`
-    {{!RFC2104}}.
+   
+3.  Return the result of computing HMAC-SHA256 {{!RFC2104}} over the canonical CBOR serialization of
+    `cbor-request` (Section 3.4 of {{I-D.yasskin-http-origin-signed-responses}}), using the given
+    `key`.
 
 ### Example
 
@@ -262,17 +253,11 @@ from Appendix G of {{I-D.ietf-cbor-cddl}}):
 
 ~~~
 {
-  ':url': 'https://example.com/',
-  'accept': '*/*',
   ':method': 'GET',
   ':token': 'hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k='
+  ':url': 'https://example.com/',
+  'accept': '*/*',
 }
-~~~
-
-Given the secret key 'sekrit', this results in the following signature:
-
-~~~
-TODO. Calculate this.
 ~~~
 
 # IANA Considerations
