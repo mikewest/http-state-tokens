@@ -66,8 +66,27 @@ they're hard to use securely, they add substantial weight to users' outgoing req
 enable tracking users' activity across the web in potentially surprising ways.
 
 This document proposes an alternative state management mechanism that aims to provide the bare
-minimum required for state management: each user agent generates a single token, bound to a single
-origin, and delivers it as a header in requests to that origin.
+minimum required for state management: each user agent generates a single token per origin,
+and delivers it as a header in requests to that origin. A few notable features distinguish this
+token from the cookie it aims to replace:
+
+1.  The client controls the token's value, not the server.
+
+2.  The token will only be available to the network layer, not to JavaScript (including network-like
+    JavaScript, such as Service Workers).
+
+3.  The user agent will generate only one token per origin, and will only expose the token to the
+    origin for which it was generated.
+
+4.  Tokens will not be generated for, or delivered to, non-secure origins.
+
+5.  Tokens will be delivered along with same-site requests by default.
+
+6.  The token persists until it's reset by the server, user, or user agent.
+
+These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
+defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
+control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in 
 
 TODO(mkwst): Flesh out an introduction.
 
@@ -79,11 +98,17 @@ if a user agent has generated a token bound to `https://example.com/` whose base
 following header when delivering the token along with requests to `https://example.com/`:
 
 ~~~
-Sec-Http-State: token=*hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=*
+Sec-Http-State: token=*hB2RfWa...GyNko4k=*
 ~~~
+{: artwork-align="center"}
 
 The server can control certain aspects of the token's delivery by responding to requests with a
 `Sec-Http-State-Options` header.
+
+~~~
+Sec-Http-State-Options: ttl=3600, key=*b7kuUkp...lkRioC2=*
+~~~
+{: artwork-align="center"}
 
 # Conventions
 
@@ -107,14 +132,15 @@ An HTTP State Token holds information which allows a user agent to maintain a st
 a specific origin. HTTP State Tokens have a number of associated properties:
 
 *   `scope` controls the scopes from which the token can be delivered. It is an enum of either
-    `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, it is `same-site`.
+    `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, its value is
+    `same-site`.
 
 *   `expiration` is a timestamp representing the point at which the token will be reset. Unless
-    otherwise specified, it is the maximum date the user agent can represent.
+    otherwise specified, its value is the maximum date the user agent can represent.
 
 *   `key` is a server-provided key which can be used to sign requests with which the token is
     delivered. It is either empty, or contains up to 256-bits of binary data. Unless otherwise
-    specified, it is empty.
+    specified, its value is empty.
 
 *   `value` is the token's value (surprising, right?). It contains up to 256-bits of binary data.
 
@@ -134,9 +160,11 @@ This map exposes three functions:
 
 *   An origin (along with its HTTP State Token) can be deleted from the map.
 
+The map is initially empty.
+
 ## Syntax
 
-### The 'Sec-Http-State' HTTP Header Field
+### The 'Sec-Http-State' HTTP Header Field {#sec-http-state}
 
 The `Sec-Http-State` HTTP header field allows user agents to deliver HTTP state tokens to servers
 as part of an HTTP request.
@@ -147,12 +175,15 @@ a dictionary ({{!I-D.ietf-httpbis-header-structure}}, Section 3.1). Its ABNF is:
 ~~~ abnf
 Sec-Http-State = sh-dictionary
 ~~~
+{: artwork-align="center"}
 
 The dictionary MUST contain:
 
 *   Exactly one member whose key is `token`, and whose value is binary content
     ({{!I-D.ietf-httpbis-header-structure}}, Section 3.9) that encodes the HTTP state token's
     value for the origin to which the header is delivered.
+
+    If the `token` member contains more than 256 bits of binary content, the member MUST be ignored.
 
 The dictionary MAY contain:
 
@@ -161,11 +192,49 @@ The dictionary MAY contain:
     and the request which contains it, using a key previously delivered by the server. This
     mechanism is described in {{sign}}.
 
-### The 'Sec-Http-State-Options' HTTP Header Field
+    If the `sig` member contains more than 256 bits of binary content, the member MUST be ignored.
 
-TODO
+The `Sec-Http-State` header is parsed per the algorithm in Section 4.2 of
+{{I-D.ietf-httpbis-header-structure}}. Servers MUST ignore the header if parsing fails, or if the
+parsed header does not contain a member whose key is `token`.
 
-# Delivering HTTP State Tokens
+User agents will attach a `Sec-Http-State` header to outgoing requests according to the processing
+rules described in {{delivery}}.
+
+### The 'Sec-Http-State-Options' HTTP Header Field {#sec-http-state-options}
+
+The `Sec-Http-State-Options` HTTP header field allows servers to deliver configuration information
+to user agents as part of an HTTP response.
+
+`Sec-Http-State-Options` is a Structured Header {{!I-D.ietf-httpbis-header-structure}}. Its value
+MUST be a dictionary ({{!I-D.ietf-httpbis-header-structure}}, Section 3.1). Its ABNF is:
+
+~~~ abnf
+Sec-Http-State-Options = sh-dictionary
+~~~
+{: artwork-align="center"}
+
+The dictionary MAY contain:
+
+*   Exactly one member whose key is `key`, and whose value is binary content
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.9) that encodes an key which can be used to
+    generate a signature over outgoing requests.
+
+    If the `key` member contains an unknown identifier, the member MUST be ignored.
+
+*   Exactly one member whose key is `scope`, and whose value is one of the following identifiers
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.8): `same-origin`, `same-site`, or
+    `cross-site`.
+
+    If the `scope` member contains an unknown identifier, the member MUST be ignored.
+
+*   Exactly one member whose key is `ttl`, and whose value is an integer
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.5) representing the server's desires for its
+    HTTP State Token's lifetime.
+
+    If the `ttl` member contains a negative number, the member MUST be ignored.
+
+# Delivering HTTP State Tokens {#delivery}
 
 User agents deliver HTTP state tokens to servers by appending a `Sec-Http-State` header field to
 outgoing requests. 
@@ -268,7 +337,7 @@ This document registers the `Sec-Http-State` and `Sec-Http-State-Options` header
 "Permanent Message Header Field Names" registry located at
 <https://www.iana.org/assignments/message-headers>.
 
-### Sec-Http-State
+### Sec-Http-State Header Field
 
 Header field name:
 
@@ -288,13 +357,13 @@ Author/Change controller:
 
 Specification document(s):
 
-: This document
+: This document (see {{sec-http-state}})
 
 Related information:
 
 : (empty)
 
-### Sec-Http-State-Options
+### Sec-Http-State-Options Header Field
 
 Header field name:
 
@@ -314,7 +383,7 @@ Author/Change controller:
 
 Specification document(s):
 
-: This document
+: This document (see {{sec-http-state-options}})
 
 Related information:
 
