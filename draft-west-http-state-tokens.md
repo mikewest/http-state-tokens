@@ -292,10 +292,11 @@ This specification provides algorithms which are called at the appropriate point
 order to attach `Sec-Http-State` headers to outgoing requests, and to ensure that
 `Sec-Http-State-Options` headers are correctly processed.
 
-## Attach HTTP State Tokens to a request
+## Attach HTTP State Tokens to a request {#attach}
 
 The user agent can attach HTTP State Tokens to a given request using an algorithm equivalent to the
-following:
+following. This algorithm is intended to execute after the `Cookie` header is handled in step 5.17.1
+of Section 4.5 of {{Fetch}}, describing the "HTTP-network-or-cache fetch" algorithm:
 
 1.  If the user agent is configured to suppress explicit identifiers for the request, or if the
     request's URL is not _a priori_ authenticated {{Mixed-Content}}, then skip the remaining steps
@@ -376,7 +377,9 @@ from Appendix G of {{I-D.ietf-cbor-cddl}}):
 Servers configure the HTTP State Token representing a given users' state by appending a
 `Sec-Http-State-Options` header field to outgoing responses.
 
-User agents MUST process this header on a given response as follows:
+User agents MUST process this header on a given response as per the following algorithm, which is
+intended to be called after the `Set-Cookie` header is handled in step 11.4 of Section 4.6 of
+{{Fetch}}, which defines the "HTTP-network fetch" algorithm.
 
 1.  Let `response-origin` be the origin of response's URL.
 
