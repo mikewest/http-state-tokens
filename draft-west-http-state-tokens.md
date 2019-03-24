@@ -34,6 +34,14 @@ normative:
   RFC2104:
   RFC2119:
   RFC4648:
+  Mixed-Content:
+    target: https://w3c.github.io/webappsec-mixed-content/
+    title: Mixed Content
+    author:
+    -
+      ins: M. West
+      name: Mike West
+      organization: Google
   Fetch:
     target: https://fetch.spec.whatwg.org/
     title: Fetch
@@ -60,15 +68,25 @@ towards our current understanding of best practice.
 
 # Introduction
 
-Cookies {{RFC6265}} allow the nominally stateless HTTP protocol to support stateful sessions,
-enabling practically everything interesting on the web today. That said, cookies have some issues:
+This document defines a state-management mechanism for HTTP that allows clients to create and
+persist origin-bound session identifiers that can be delivered to servers in order to enable
+stateful interaction. In a nutshell, each user agent will generate a single token per secure
+origin, and will deliver it as a `Sec-Http-State` structured header along with requests to that
+origin.
+
+Servers can configure this token's characteristics via a `Sec-Http-State-Options` response header.
+
+That's it.
+
+## Wait. Don't we have cookies?
+
+Cookies {{RFC6265}} are indeed a pervasive HTTP state management mechanism, and they enable
+practically everything interesting on the web today. That said, cookies have some issues:
 they're hard to use securely, they add substantial weight to users' outgoing requests, and they
 enable tracking users' activity across the web in potentially surprising ways.
 
-This document proposes an alternative state management mechanism that aims to provide the bare
-minimum required for state management: each user agent generates a single token per origin,
-and delivers it as a header in requests to that origin. A few notable features distinguish this
-token from the cookie it aims to replace:
+The mechanism proposed in this document aims at a more minimal and opinionated construct which
+takes inspiration from some of cookies' optional characteristics. In particular:
 
 1.  The client controls the token's value, not the server.
 
@@ -82,11 +100,14 @@ token from the cookie it aims to replace:
 
 5.  Tokens will be delivered along with same-site requests by default.
 
-6.  The token persists until it's reset by the server, user, or user agent.
+6.  Each token persists for one hour after generation by default. This default expiration time can
+    be overwritten by servers, and tokens can be reset at any time by servers, users, or user
+    agents.
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
 control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in 
+{{sec-http-state-options}}.
 
 TODO(mkwst): Flesh out an introduction.
 
@@ -106,7 +127,7 @@ The server can control certain aspects of the token's delivery by responding to 
 `Sec-Http-State-Options` header.
 
 ~~~
-Sec-Http-State-Options: ttl=3600, key=*b7kuUkp...lkRioC2=*
+Sec-Http-State-Options: max-age=3600, key=*b7kuUkp...lkRioC2=*
 ~~~
 {: artwork-align="center"}
 
@@ -128,21 +149,25 @@ relies upon the Augmented Backus-Naur Form (ABNF) notation of {{!RFC5234}} and t
 
 ### HTTP State Tokens
 
-An HTTP State Token holds information which allows a user agent to maintain a stateful session with
-a specific origin. HTTP State Tokens have a number of associated properties:
+An HTTP State Token holds a session identifier which allows a user agent to maintain a stateful
+session with a specific origin, along with associated metadata:
 
-*   `scope` controls the scopes from which the token can be delivered. It is an enum of either
-    `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, its value is
+*   `scope` specifies the initiating contexts from which the token can be delivered. It is an enum
+    of either `same-origin`, `same-site`, or `cross-site`. Unless otherwise specified, its value is
     `same-site`.
 
-*   `expiration` is a timestamp representing the point at which the token will be reset. Unless
-    otherwise specified, its value is the maximum date the user agent can represent.
+*   `creation` is a timestamp representing the point in time when the token was created.
+
+*   `max-age` is a timestamp representing the token's lifetime in seconds. Unless otherwise
+    specified, HTTP State Tokens have a 3600 second (1 hour) `max-age`.
 
 *   `key` is a server-provided key which can be used to sign requests with which the token is
-    delivered. It is either empty, or contains up to 256-bits of binary data. Unless otherwise
-    specified, its value is empty.
+    delivered. It is either null, or contains up to 256-bits of binary data. Unless otherwise
+    specified, its value is null.
 
 *   `value` is the token's value (surprising, right?). It contains up to 256-bits of binary data.
+
+An HTTP State Token is expired if its `creation` timestamp plus `max-age` seconds is in the past.
 
 ### Token Storage
 
@@ -161,6 +186,25 @@ This map exposes three functions:
 *   An origin (along with its HTTP State Token) can be deleted from the map.
 
 The map is initially empty.
+
+#### Generate an HTTP State Token for an origin {#generate}
+
+The user agent can generate a new HTTP State Token for an origin using an algorithm equivalent
+to the following:
+
+1.  Delete `origin` from the user agent's token store.
+
+2.  Let `token` be a newly created HTTP State Token with its properties set as follows:
+
+    *   `creation`: The current time.
+    *   `key`: null
+    *   `max-age`: 3600
+    *   `scope`: `same-site`
+    *   `value`: 256 cryptographically random bits.
+
+3.  Store `token` in the user agent's token store for `origin`.  
+
+4.  Return `token`.
 
 ## Syntax
 
@@ -214,25 +258,30 @@ Sec-Http-State-Options = sh-dictionary
 ~~~
 {: artwork-align="center"}
 
+The `Sec-Http-State-Options` header is parsed per the algorithm in Section 4.2 of
+{{I-D.ietf-httpbis-header-structure}}. User agents MUST ignore the header if parsing fails.
+
 The dictionary MAY contain:
 
 *   Exactly one member whose key is `key`, and whose value is binary content
-    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.9) that encodes an key which can be used to
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.10) that encodes an key which can be used to
     generate a signature over outgoing requests.
 
-    If the `key` member contains an unknown identifier, the member MUST be ignored.
-
-*   Exactly one member whose key is `scope`, and whose value is one of the following identifiers
-    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.8): `same-origin`, `same-site`, or
+*   Exactly one member whose key is `scope`, and whose value is one of the following tokens 
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.9): `same-origin`, `same-site`, or
     `cross-site`.
 
     If the `scope` member contains an unknown identifier, the member MUST be ignored.
 
-*   Exactly one member whose key is `ttl`, and whose value is an integer
-    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.5) representing the server's desires for its
-    HTTP State Token's lifetime.
+*   Exactly one member whose key is `max-age`, and whose value is an integer
+    ({{!I-D.ietf-httpbis-header-structure}}, Section 3.6) representing the server's desired lifetime
+    for its HTTP State Token.
 
-    If the `ttl` member contains a negative number, the member MUST be ignored.
+    If the `max-age` member contains anything other than a positive integer, the member MUST be
+    ignored.
+
+User agents will process the `Sec-Http-State-Options` header on incoming responses according to the
+processing rules described in {{config}}.
 
 # Delivering HTTP State Tokens {#delivery}
 
@@ -248,44 +297,36 @@ order to attach `Sec-Http-State` headers to outgoing requests, and to ensure tha
 The user agent can attach HTTP State Tokens to a given request using an algorithm equivalent to the
 following:
 
-1.  If the user agent is configured to block cookies for the request, skip the remaining steps in
-    this algorithm, and return without modifying the request.
+1.  If the user agent is configured to suppress explicit identifiers for the request, or if the
+    request's URL is not _a priori_ authenticated {{Mixed-Content}}, then skip the remaining steps
+    in this algorithm, and return without modifying the request.
 
 2.  Let `target-origin` be the origin of `request`'s current URL.
 
 3.  Let `request-token` be the result of retrieving origin's token from the user agent's token
     store, or `null` if no such token exists.
 
-4.  Let `serialized-token` be the empty string.
+4.  If `request-token` is `null`, or if `request-token` is expired, then set `request-token` to the
+    result of generating an HTTP State Token for `target-origin` ({{generate}}).
 
-5.  Let `serialized-signature` be the empty string.
+5.  If `request-token`'s `scope` is `same-origin` and `target-origin` is not same origin with
+    `request`'s origin, or if `request-token`'s `scope` is `same-site` and `target-origin`'s
+    registrable domain is not the same as `request`'s origin's registrable domain, then skip the
+    remaining steps in this algorithm, and return without modifying the request.
 
-6.  Let `header-value` be a Structured Header whose value is a dictionary.
+    ISSUE: Perhaps we should add some sort of `out-of-scope` token to the header in this case?
+    Or note that folks should look at `Sec-Fetch-Site`?
 
-7.  If `request-token` is not `null`:
+6.  Let `serialized-value` be the base64 encoding ({{!RFC4648}}, Section 4) of `request-token`'s
+    value.
 
-    1.  If `request-token`'s `scope` is `same-origin` and `target-origin` is not same origin with
-        `request`'s origin, or if `request-token`'s `scope` is `same-site` and `target-origin`'s
-        registrable domain is not the same as `request`'s origin's registrable domain, then skip
-        the remaining substeps.
+7.  Insert a member into `header-value` whose key is `token` and whose value is `serialized-value`.
 
-        ISSUE: Perhaps we should add some sort of `out-of-scope` token to the header in this case?
-        Or note that folks should look at `Sec-Metadata`?
+8.  If `request-token`'s `key` is not null, then insert a member into `header-value` whose key is
+    `sig`, and whose value is the result of executing {{sign}} on request, `serialized-value`, and
+    `request-token`'s `key`.
 
-    2.  Set `serialized-token` to the base64 encoding ({{!RFC4648}}, Section 4) of
-        `request-token`'s value.
-
-    3.  If `request-token`'s `key` is present:
-
-        1.  Set `serialized-signature` to the result of executing {{sign}} on request,
-            `serialized-token`, and `request-token`'s `key`.
-
-8.  Insert a member into `header-value` whose key is `token`, and whose value is `serialized-token`.
-
-9.  If `serialized-signature` is not empty, then insert a member into `header-value` whose key is
-    `sig`, and whose value is `serialized-signature`.
-
-10. Append a header to `request`'s header list whose name is `Sec-Http-State`, and whose value is
+9.  Append a header to `request`'s header list whose name is `Sec-Http-State`, and whose value is
     the result of serializing `header-value` ({{I-D.ietf-httpbis-header-structure}}, Section 4.1).
   
 ## Generate a request's signature {#sign}
@@ -328,6 +369,49 @@ from Appendix G of {{I-D.ietf-cbor-cddl}}):
   'accept': '*/*',
 }
 ~~~
+
+
+# Configuring HTTP State Tokens {#config}
+
+Servers configure the HTTP State Token representing a given users' state by appending a
+`Sec-Http-State-Options` header field to outgoing responses.
+
+User agents MUST process this header on a given response as follows:
+
+1.  Let `response-origin` be the origin of response's URL.
+
+2.  If the response's URL is not _a priori_ authenticated {{Mixed-Content}}, return without
+    altering `response-origin`'s HTTP State Token.
+
+3.  Let `token` be the result of retrieving `response-origin`'s token from the user agent's token
+    store, or `null` if no such token exists.
+
+4.  If `token` is `null`, or if `request-token` is expired, then set `token` to the result of
+    generating an HTTP State Token for `response-origin` ({{generate}}).`
+
+5.  If the response's header list contains `Sec-Http-State-Options`, then:
+
+    1.  Let `header` be the result of getting response's `Sec-Http-State-Options` header, and parsing
+        parsing it per the algorithm in Section 4.2 of {{I-D.ietf-httpbis-header-structure}}.
+
+    2.  Return without altering `response-origin`'s HTTP State Token if any of the following
+        conditions hold:
+
+        *   Parsing the header results in failure.
+        *   `header` has a member named `key` whose value is not a byte sequence (Section 3.10 of
+            {{I-D.ietf-httpbis-header-structure}})
+        *   `header` has a member named `scope` whose value is not one of the following tokens
+            (Section 3.9 of {{I-D.ietf-httpbis-header-structure}}): "same-origin", "same-site",
+            and "cross-site".
+        *   `header` has a member named `max-age` whose value is not a positive integer (Section 3.6
+            of {{I-D.ietf-httpbis-header-structure}}).
+
+    3.  If `header` has a member named `key`, set `token`'s `key` to the member's value.
+
+    4.  If `header` has a member named `scope`, set `token`'s `scope` to the member's value.
+
+    5.  If `header` has a member named `max-age`, set `token`'s `max-age` to the member's value.
+    
 
 # IANA Considerations
 
@@ -401,7 +485,7 @@ TODO
 
 # Acknowledgements
 
-This document owes much to Adam Barth's {{I-D.abarth-cake}}.
+This document owes much to Adam Barth's {{I-D.abarth-cake}} and {{RFC6265}}.
 
 # Changes
 
