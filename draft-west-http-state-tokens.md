@@ -1,6 +1,6 @@
 ---
 title: HTTP State Tokens
-docname: draft-west-http-state-tokens
+docname: draft-west-http-state-tokens-latest
 date: {DATE}
 category: std
 ipr: trust200902

@@ -7,413 +7,320 @@
 
   <title>HTTP State Tokens</title>
 
-  <style type="text/css" title="Xml2Rfc (sans serif)">
-  /*<![CDATA[*/
-	  a {
-	  text-decoration: none;
-	  }
-      /* info code from SantaKlauss at http://www.madaboutstyle.com/tooltip2.html */
-      a.info {
-          /* This is the key. */
-          position: relative;
-          z-index: 24;
-          text-decoration: none;
-      }
-      a.info:hover {
-          z-index: 25;
-          color: #FFF; background-color: #900;
-      }
-      a.info span { display: none; }
-      a.info:hover span.info {
-          /* The span will display just on :hover state. */
-          display: block;
-          position: absolute;
-          font-size: smaller;
-          top: 2em; left: -5em; width: 15em;
-          padding: 2px; border: 1px solid #333;
-          color: #900; background-color: #EEE;
-          text-align: left;
-      }
-	  a.smpl {
-	  color: black;
-	  }
-	  a:hover {
-	  text-decoration: underline;
-	  }
-	  a:active {
-	  text-decoration: underline;
-	  }
-	  address {
-	  margin-top: 1em;
-	  margin-left: 2em;
-	  font-style: normal;
-	  }
-	  body {
-	  color: black;
-	  font-family: verdana, helvetica, arial, sans-serif;
-	  font-size: 10pt;
-	  max-width: 55em;
-	  
-	  }
-	  cite {
-	  font-style: normal;
-	  }
-	  dd {
-	  margin-right: 2em;
-	  }
-	  dl {
-	  margin-left: 2em;
-	  }
-	
-	  ul.empty {
-	  list-style-type: none;
-	  }
-	  ul.empty li {
-	  margin-top: .5em;
-	  }
-	  dl p {
-	  margin-left: 0em;
-	  }
-	  dt {
-	  margin-top: .5em;
-	  }
-	  h1 {
-	  font-size: 14pt;
-	  line-height: 21pt;
-	  page-break-after: avoid;
-	  }
-	  h1.np {
-	  page-break-before: always;
-	  }
-	  h1 a {
-	  color: #333333;
-	  }
-	  h2 {
-	  font-size: 12pt;
-	  line-height: 15pt;
-	  page-break-after: avoid;
-	  }
-	  h3, h4, h5, h6 {
-	  font-size: 10pt;
-	  page-break-after: avoid;
-	  }
-	  h2 a, h3 a, h4 a, h5 a, h6 a {
-	  color: black;
-	  }
-	  img {
-	  margin-left: 3em;
-	  }
-	  li {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  ol {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  ol p {
-	  margin-left: 0em;
-	  }
-	  p {
-	  margin-left: 2em;
-	  margin-right: 2em;
-	  }
-	  pre {
-	  margin-left: 3em;
-	  background-color: lightyellow;
-	  padding: .25em;
-	  }
-	  pre.text2 {
-	  border-style: dotted;
-	  border-width: 1px;
-	  background-color: #f0f0f0;
-	  width: 69em;
-	  }
-	  pre.inline {
-	  background-color: white;
-	  padding: 0em;
-	  }
-	  pre.text {
-	  border-style: dotted;
-	  border-width: 1px;
-	  background-color: #f8f8f8;
-	  width: 69em;
-	  }
-	  pre.drawing {
-	  border-style: solid;
-	  border-width: 1px;
-	  background-color: #f8f8f8;
-	  padding: 2em;
-	  }
-	  table {
-	  margin-left: 2em;
-	  }
-	  table.tt {
-	  vertical-align: top;
-	  }
-	  table.full {
-	  border-style: outset;
-	  border-width: 1px;
-	  }
-	  table.headers {
-	  border-style: outset;
-	  border-width: 1px;
-	  }
-	  table.tt td {
-	  vertical-align: top;
-	  }
-	  table.full td {
-	  border-style: inset;
-	  border-width: 1px;
-	  }
-	  table.tt th {
-	  vertical-align: top;
-	  }
-	  table.full th {
-	  border-style: inset;
-	  border-width: 1px;
-	  }
-	  table.headers th {
-	  border-style: none none inset none;
-	  border-width: 1px;
-	  }
-	  table.left {
-	  margin-right: auto;
-	  }
-	  table.right {
-	  margin-left: auto;
-	  }
-	  table.center {
-	  margin-left: auto;
-	  margin-right: auto;
-	  }
-	  caption {
-	  caption-side: bottom;
-	  font-weight: bold;
-	  font-size: 9pt;
-	  margin-top: .5em;
-	  }
-	
-	  table.header {
-	  border-spacing: 1px;
-	  width: 95%;
-	  font-size: 10pt;
-	  color: white;
-	  }
-	  td.top {
-	  vertical-align: top;
-	  }
-	  td.topnowrap {
-	  vertical-align: top;
-	  white-space: nowrap; 
-	  }
-	  table.header td {
-	  background-color: gray;
-	  width: 50%;
-	  }
-	  table.header a {
-	  color: white;
-	  }
-	  td.reference {
-	  vertical-align: top;
-	  white-space: nowrap;
-	  padding-right: 1em;
-	  }
-	  thead {
-	  display:table-header-group;
-	  }
-	  ul.toc, ul.toc ul {
-	  list-style: none;
-	  margin-left: 1.5em;
-	  margin-right: 0em;
-	  padding-left: 0em;
-	  }
-	  ul.toc li {
-	  line-height: 150%;
-	  font-weight: bold;
-	  font-size: 10pt;
-	  margin-left: 0em;
-	  margin-right: 0em;
-	  }
-	  ul.toc li li {
-	  line-height: normal;
-	  font-weight: normal;
-	  font-size: 9pt;
-	  margin-left: 0em;
-	  margin-right: 0em;
-	  }
-	  li.excluded {
-	  font-size: 0pt;
-	  }
-	  ul p {
-	  margin-left: 0em;
-	  }
-	
-	  .comment {
-	  background-color: yellow;
-	  }
-	  .center {
-	  text-align: center;
-	  }
-	  .error {
-	  color: red;
-	  font-style: italic;
-	  font-weight: bold;
-	  }
-	  .figure {
-	  font-weight: bold;
-	  text-align: center;
-	  font-size: 9pt;
-	  }
-	  .filename {
-	  color: #333333;
-	  font-weight: bold;
-	  font-size: 12pt;
-	  line-height: 21pt;
-	  text-align: center;
-	  }
-	  .fn {
-	  font-weight: bold;
-	  }
-	  .hidden {
-	  display: none;
-	  }
-	  .left {
-	  text-align: left;
-	  }
-	  .right {
-	  text-align: right;
-	  }
-	  .title {
-	  color: #990000;
-	  font-size: 18pt;
-	  line-height: 18pt;
-	  font-weight: bold;
-	  text-align: center;
-	  margin-top: 36pt;
-	  }
-	  .vcardline {
-	  display: block;
-	  }
-	  .warning {
-	  font-size: 14pt;
-	  background-color: yellow;
-	  }
-	
-	
-	  @media print {
-	  .noprint {
-		display: none;
-	  }
-	
-	  a {
-		color: black;
-		text-decoration: none;
-	  }
-	
-	  table.header {
-		width: 90%;
-	  }
-	
-	  td.header {
-		width: 50%;
-		color: black;
-		background-color: white;
-		vertical-align: top;
-		font-size: 12pt;
-	  }
-	
-	  ul.toc a::after {
-		content: leader('.') target-counter(attr(href), page);
-	  }
-	
-	  ul.ind li li a {
-		content: target-counter(attr(href), page);
-	  }
-	
-	  .print2col {
-		column-count: 2;
-		-moz-column-count: 2;
-		column-fill: auto;
-	  }
-	  }
-	
-	  @page {
-	  @top-left {
-		   content: "Internet-Draft"; 
-	  } 
-	  @top-right {
-		   content: "December 2010"; 
-	  } 
-	  @top-center {
-		   content: "Abbreviated Title";
-	  } 
-	  @bottom-left {
-		   content: "Doe"; 
-	  } 
-	  @bottom-center {
-		   content: "Expires June 2011"; 
-	  } 
-	  @bottom-right {
-		   content: "[Page " counter(page) "]"; 
-	  } 
-	  }
-	
-	  @page:first { 
-		@top-left {
-		  content: normal;
-		}
-		@top-right {
-		  content: normal;
-		}
-		@top-center {
-		  content: normal;
-		}
-	  }
-  /*]]>*/
-  </style>
+  
+<style type="text/css">/*<![CDATA[*/
 
-  <link href="#rfc.toc" rel="Contents"/>
-<link href="#rfc.section.1" rel="Chapter" title="1 Introduction"/>
-<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Wait. Don&#x2019;t we have cookies?"/>
-<link href="#rfc.section.1.2" rel="Chapter" title="1.2 Examples"/>
-<link href="#rfc.section.2" rel="Chapter" title="2 Conventions"/>
-<link href="#rfc.section.2.1" rel="Chapter" title="2.1 Conformance"/>
-<link href="#rfc.section.2.2" rel="Chapter" title="2.2 Syntax"/>
-<link href="#rfc.section.3" rel="Chapter" title="3 Infrastructure"/>
-<link href="#rfc.section.3.1" rel="Chapter" title="3.1 HTTP State Tokens"/>
-<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Requests and Responses"/>
-<link href="#rfc.section.3.3" rel="Chapter" title="3.3 Token Storage"/>
-<link href="#rfc.section.4" rel="Chapter" title="4 Syntax"/>
-<link href="#rfc.section.4.1" rel="Chapter" title="4.1 The &#x2018;Sec-Http-State&#x2019; HTTP Header Field"/>
-<link href="#rfc.section.4.2" rel="Chapter" title="4.2 The &#x2018;Sec-Http-State-Options&#x2019; HTTP Header Field"/>
-<link href="#rfc.section.5" rel="Chapter" title="5 Delivering HTTP State Tokens"/>
-<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Attach HTTP State Tokens to a request"/>
-<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Generate a request&#x2019;s signature"/>
-<link href="#rfc.section.6" rel="Chapter" title="6 Configuring HTTP State Tokens"/>
-<link href="#rfc.section.7" rel="Chapter" title="7 Security and Privacy Considerations"/>
-<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Confidentiality and Integrity"/>
-<link href="#rfc.section.7.2" rel="Chapter" title="7.2 Signed Sessions"/>
-<link href="#rfc.section.7.3" rel="Chapter" title="7.3 User Control"/>
-<link href="#rfc.section.7.4" rel="Chapter" title="7.4 Lifetime"/>
-<link href="#rfc.section.7.5" rel="Chapter" title="7.5 Ambient Authority and Cross-Site Delivery"/>
-<link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations"/>
-<link href="#rfc.section.8.1" rel="Chapter" title="8.1 Header Field Registry"/>
-<link href="#rfc.references" rel="Chapter" title="9 References"/>
-<link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References"/>
-<link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References"/>
-<link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements"/>
-<link href="#rfc.appendix.B" rel="Chapter" title="B Changes"/>
-<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since the beginning of time"/>
-<link href="#rfc.authors" rel="Chapter"/>
+body {
+  font: 16px "Helvetica Neue","Open Sans",Helvetica,Calibri,sans-serif;
+  color: #333;
+  font-size-adjust: 0.5;
+  line-height: 24px;
+  margin: 75px auto;
+  max-width: 624px;
+  padding: 0 5px;
+}
+
+.title, .filename, h1, h2, h3, h4, h5 {
+  font: 16px "Roboto Condensed","Helvetica Neue","Open Sans",Helvetica,Calibri,sans-serif;
+  font-size-adjust: 0.5;
+  font-weight: bold;
+  color: #333;
+  line-height: 100%;
+  margin: 1.2em 0 0.3em;
+}
+.title, #rfc\.title h1 { font-size: 32px; }
+h1, section h1, h2, section h2, section h3, nav h2 { font-size: 20px; }
+h3, section h4, h4, section h5 { font-size: 16px; }
+h1 a[href], h2 a[href], h3 a[href], h4 a[href] {
+  color: #333;
+}
+
+table {
+  margin-left: 0em;
+  border-collapse: collapse;
+}
+th {
+  text-align: left;
+  border-bottom: 2px solid #ddd;
+}
+td {
+  border-top: 1px solid #ddd;
+  vertical-align: top;
+}
+tr:nth-child(2n+1) > td,
+tr:nth-child(2n+1) > th {
+  background-color: #f9f9f9;
+}
+td.reference {
+  max-width: 200px;
+  border-top: none;
+  padding-right: 1em;
+}
+.right {
+  text-align: right;
+}
 
 
-  <meta name="generator" content="xml2rfc version 2.5.1 - http://tools.ietf.org/tools/xml2rfc" />
+table.header, table#rfc\.headerblock {
+  width: 100%;
+}
+table.header td, table#rfc\.headerblock td {
+  border: none;
+  background-color: transparent;
+  color: black;
+  padding: 0;
+}
+.filename {
+  display: block;
+  color: rgb(119, 119, 119);
+  font-size: 20px;
+  font-weight: normal;
+  line-height: 100%;
+  margin: 10px 0 32px;
+}
+#rfc\.abstract+p, #rfc\.abstract p {
+  font-size: 20px;
+  line-height: 28px;
+}
+
+samp, tt, code, pre, span.tt {
+  font: 13.5px Consolas, monospace;
+  font-size-adjust: none;
+}
+pre {
+  background-color: #eee;
+  border: 1px solid #ddd;
+  overflow-x: auto;
+  padding: 5px;
+  margin: 5px;
+}
+.figure, caption {
+  font-style: italic;
+  margin: 0 1.5em;
+  text-align: left;
+}
+
+address {
+  margin: 16px 2px;
+  line-height: 20px;
+}
+.vcard {
+  font-style: normal;
+}
+.vcardline {
+  display: block;
+}
+.vcardline .fn, address b {
+  font-weight: normal;
+}
+.vcardline .hidden {
+  display: none;
+}
+
+dl {
+  margin-left: 1em;
+}
+dl.dl-horizontal: {
+  margin-left: 0;
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.nohang > dt {
+  float: none;
+}
+dl > dd {
+  margin-bottom: .5em;
+}
+dl.compact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+ul.empty {
+  list-style-type: none;
+}
+ul.empty li {
+  margin-top: .5em;
+}
+
+hr {
+  border: 0;
+  border-top: 1px solid #eee;
+}
+hr.noprint {
+  display: none;
+}
+
+a {
+  text-decoration: none;
+}
+a[href] {
+  color: #2a6496;
+}
+a[href]:hover {
+  background-color: #eee;
+}
+
+p, ol, ul, li {
+  padding: 0;
+}
+p {
+  margin: 0.5em 0;
+}
+ol, ul {
+  margin: 0.2em 0 0.2em 2em;
+}
+li {
+  margin: 0.2em 0;
+}
+address {
+  font-style: normal;
+}
+
+ul.toc ul {
+  margin: 0 0 0 2em;
+}
+ul.toc li {
+  list-style: none;
+  margin: 0;
+}
+
+@media screen and (min-width: 924px) {
+  body {
+    padding-right: 350px;
+  }
+  body>ul.toc, body>#rfc\.toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 500px);
+    width: 300px;
+    z-index: 1;
+    overflow: auto;
+    overscroll-behavior: contain;
+  }
+  body>#rfc\.toc {
+    top: 55px;
+  }
+  body>ul.toc {
+    top: 100px;
+  }
+
+  ul.toc {
+    margin: 0 0 0 4px;
+    font-size: 12px;
+    line-height: 20px;
+  }
+  ul.toc ul {
+    margin-left: 1.2em;
+  }
+}
+
+.github-fork-ribbon-wrapper {
+  display: none;
+}
+@media screen and (min-width: 800px) {
+  /* "Fork me on GitHub" CSS ribbon based on
+   * https://github.com/simonwhitaker/github-fork-ribbon-css
+   */
+  .github-fork-ribbon {
+    position: absolute;
+    padding: 2px 0;
+    background-color: #a00;
+    background-image: linear-gradient(to bottom, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.15));
+    box-shadow: 0 2px 3px 0 rgba(0, 0, 0, 0.5);
+    font: 700 12px "Helvetica Neue", Helvetica, Arial, sans-serif;
+
+    pointer-events: auto;
+
+    top: 38px;
+    right: -45px;
+
+    transform: rotate(45deg);
+  }
+
+  .github-fork-ribbon a[href],
+  .github-fork-ribbon a[href]:hover {
+    color: #fff;
+    background-color: transparent;
+    text-decoration: none;
+    text-shadow: 0 -1px rgba(0, 0, 0, 0.5);
+    text-align: center;
+
+    width: 190px;
+    line-height: 18px;
+
+    display: inline-block;
+    padding: 2px 0;
+
+    border: 1.5px dotted #fff;
+    border-color: rgba(255, 255, 255, 0.6);
+  }
+
+  .github-fork-ribbon-wrapper {
+    display: block;
+    width: 130px;
+    height: 130px;
+    position: absolute;
+    overflow: hidden;
+    top: 0; right: 0;
+    z-index: 2;
+    pointer-events: none;
+  }
+}
+@media screen and (min-width: 1000px) {
+  .github-fork-ribbon-wrapper {
+    position: fixed;
+  }
+/*]]>*/</style>
+<meta name="viewport" content="initial-scale=1.0">
+
+
+  <link href="#rfc.toc" rel="Contents">
+<link href="#rfc.section.1" rel="Chapter" title="1 Introduction">
+<link href="#rfc.section.1.1" rel="Chapter" title="1.1 Wait. Don&#8217;t we have cookies?">
+<link href="#rfc.section.1.2" rel="Chapter" title="1.2 Examples">
+<link href="#rfc.section.2" rel="Chapter" title="2 Conventions">
+<link href="#rfc.section.2.1" rel="Chapter" title="2.1 Conformance">
+<link href="#rfc.section.2.2" rel="Chapter" title="2.2 Syntax">
+<link href="#rfc.section.3" rel="Chapter" title="3 Infrastructure">
+<link href="#rfc.section.3.1" rel="Chapter" title="3.1 HTTP State Tokens">
+<link href="#rfc.section.3.2" rel="Chapter" title="3.2 Requests and Responses">
+<link href="#rfc.section.3.3" rel="Chapter" title="3.3 Token Storage">
+<link href="#rfc.section.4" rel="Chapter" title="4 Syntax">
+<link href="#rfc.section.4.1" rel="Chapter" title="4.1 The &#8216;Sec-Http-State&#8217; HTTP Header Field">
+<link href="#rfc.section.4.2" rel="Chapter" title="4.2 The &#8216;Sec-Http-State-Options&#8217; HTTP Header Field">
+<link href="#rfc.section.5" rel="Chapter" title="5 Delivering HTTP State Tokens">
+<link href="#rfc.section.5.1" rel="Chapter" title="5.1 Attach HTTP State Tokens to a request">
+<link href="#rfc.section.5.2" rel="Chapter" title="5.2 Generate a request&#8217;s signature">
+<link href="#rfc.section.6" rel="Chapter" title="6 Configuring HTTP State Tokens">
+<link href="#rfc.section.7" rel="Chapter" title="7 Security and Privacy Considerations">
+<link href="#rfc.section.7.1" rel="Chapter" title="7.1 Confidentiality and Integrity">
+<link href="#rfc.section.7.2" rel="Chapter" title="7.2 Signed Sessions">
+<link href="#rfc.section.7.3" rel="Chapter" title="7.3 User Control">
+<link href="#rfc.section.7.4" rel="Chapter" title="7.4 Lifetime">
+<link href="#rfc.section.7.5" rel="Chapter" title="7.5 Ambient Authority and Cross-Site Delivery">
+<link href="#rfc.section.8" rel="Chapter" title="8 IANA Considerations">
+<link href="#rfc.section.8.1" rel="Chapter" title="8.1 Header Field Registry">
+<link href="#rfc.references" rel="Chapter" title="9 References">
+<link href="#rfc.references.1" rel="Chapter" title="9.1 Normative References">
+<link href="#rfc.references.2" rel="Chapter" title="9.2 Informative References">
+<link href="#rfc.appendix.A" rel="Chapter" title="A Acknowledgements">
+<link href="#rfc.appendix.B" rel="Chapter" title="B Changes">
+<link href="#rfc.appendix.B.1" rel="Chapter" title="B.1 Since the beginning of time">
+<link href="#rfc.authors" rel="Chapter">
+
+
+  <meta name="generator" content="xml2rfc version 2.14.1 - https://tools.ietf.org/tools/xml2rfc" />
   <link rel="schema.dct" href="http://purl.org/dc/terms/" />
 
   <meta name="dct.creator" content="West, M." />
-  <meta name="dct.identifier" content="urn:ietf:id:draft-west-http-state-tokens" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-3-25" />
+  <meta name="dct.identifier" content="urn:ietf:id:draft-west-http-state-tokens-latest" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-25" />
   <meta name="dct.abstract" content="This document describes a mechanism which allows HTTP servers to maintain stateful sessions with HTTP user agents. It aims to address some of the security and privacy considerations which have been identified in existing state management mechanisms, providing developers with a well-lit path towards our current understanding of best practice." />
   <meta name="description" content="This document describes a mechanism which allows HTTP servers to maintain stateful sessions with HTTP user agents. It aims to address some of the security and privacy considerations which have been identified in existing state management mechanisms, providing developers with a well-lit path towards our current understanding of best practice." />
 
@@ -425,20 +332,20 @@
     <tbody>
     
     	<tr>
-  <td class="left">Network Working Group</td>
-  <td class="right">M. West</td>
+<td class="left">Network Working Group</td>
+<td class="right">M. West</td>
 </tr>
 <tr>
-  <td class="left">Internet-Draft</td>
-  <td class="right">Google</td>
+<td class="left">Internet-Draft</td>
+<td class="right">Google</td>
 </tr>
 <tr>
-  <td class="left">Intended status: Standards Track</td>
-  <td class="right">March 25, 2019</td>
+<td class="left">Intended status: Standards Track</td>
+<td class="right">March 25, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 26, 2019</td>
-  <td class="right"></td>
+<td class="left">Expires: September 26, 2019</td>
+<td class="right"></td>
 </tr>
 
     	
@@ -446,86 +353,118 @@
   </table>
 
   <p class="title">HTTP State Tokens<br />
-  <span class="filename">draft-west-http-state-tokens</span></p>
+  <span class="filename">draft-west-http-state-tokens-latest</span></p>
   
-  <h1 id="rfc.abstract">
-  <a href="#rfc.abstract">Abstract</a>
-</h1>
+  <h1 id="rfc.abstract"><a href="#rfc.abstract">Abstract</a></h1>
 <p>This document describes a mechanism which allows HTTP servers to maintain stateful sessions with HTTP user agents. It aims to address some of the security and privacy considerations which have been identified in existing state management mechanisms, providing developers with a well-lit path towards our current understanding of best practice.</p>
-<h1 id="rfc.status">
-  <a href="#rfc.status">Status of This Memo</a>
-</h1>
+<h1 id="rfc.status"><a href="#rfc.status">Status of This Memo</a></h1>
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
-<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
+<p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at https://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
 <p>This Internet-Draft will expire on September 26, 2019.</p>
-<h1 id="rfc.copyrightnotice">
-  <a href="#rfc.copyrightnotice">Copyright Notice</a>
-</h1>
+<h1 id="rfc.copyrightnotice"><a href="#rfc.copyrightnotice">Copyright Notice</a></h1>
 <p>Copyright (c) 2019 IETF Trust and the persons identified as the document authors.  All rights reserved.</p>
-<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (http://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
+<p>This document is subject to BCP 78 and the IETF Trust's Legal Provisions Relating to IETF Documents (https://trustee.ietf.org/license-info) in effect on the date of publication of this document.  Please review these documents carefully, as they describe your rights and restrictions with respect to this document.  Code Components extracted from this document must include Simplified BSD License text as described in Section 4.e of the Trust Legal Provisions and are provided without warranty as described in the Simplified BSD License.</p>
 
   
   <hr class="noprint" />
   <h1 class="np" id="rfc.toc"><a href="#rfc.toc">Table of Contents</a></h1>
   <ul class="toc">
 
-  	<li>1.   <a href="#rfc.section.1">Introduction</a></li>
-<ul><li>1.1.   <a href="#rfc.section.1.1">Wait. Don&#8217;t we have cookies?</a></li>
-<li>1.2.   <a href="#rfc.section.1.2">Examples</a></li>
-</ul><li>2.   <a href="#rfc.section.2">Conventions</a></li>
-<ul><li>2.1.   <a href="#rfc.section.2.1">Conformance</a></li>
-<li>2.2.   <a href="#rfc.section.2.2">Syntax</a></li>
-</ul><li>3.   <a href="#rfc.section.3">Infrastructure</a></li>
-<ul><li>3.1.   <a href="#rfc.section.3.1">HTTP State Tokens</a></li>
-<li>3.2.   <a href="#rfc.section.3.2">Requests and Responses</a></li>
-<li>3.3.   <a href="#rfc.section.3.3">Token Storage</a></li>
-</ul><li>4.   <a href="#rfc.section.4">Syntax</a></li>
-<ul><li>4.1.   <a href="#rfc.section.4.1">The &#8216;Sec-Http-State&#8217; HTTP Header Field</a></li>
-<li>4.2.   <a href="#rfc.section.4.2">The &#8216;Sec-Http-State-Options&#8217; HTTP Header Field</a></li>
-</ul><li>5.   <a href="#rfc.section.5">Delivering HTTP State Tokens</a></li>
-<ul><li>5.1.   <a href="#rfc.section.5.1">Attach HTTP State Tokens to a request</a></li>
-<li>5.2.   <a href="#rfc.section.5.2">Generate a request&#8217;s signature</a></li>
-</ul><li>6.   <a href="#rfc.section.6">Configuring HTTP State Tokens</a></li>
-<li>7.   <a href="#rfc.section.7">Security and Privacy Considerations</a></li>
-<ul><li>7.1.   <a href="#rfc.section.7.1">Confidentiality and Integrity</a></li>
-<li>7.2.   <a href="#rfc.section.7.2">Signed Sessions</a></li>
-<li>7.3.   <a href="#rfc.section.7.3">User Control</a></li>
-<li>7.4.   <a href="#rfc.section.7.4">Lifetime</a></li>
-<li>7.5.   <a href="#rfc.section.7.5">Ambient Authority and Cross-Site Delivery</a></li>
-</ul><li>8.   <a href="#rfc.section.8">IANA Considerations</a></li>
-<ul><li>8.1.   <a href="#rfc.section.8.1">Header Field Registry</a></li>
-</ul><li>9.   <a href="#rfc.references">References</a></li>
-<ul><li>9.1.   <a href="#rfc.references.1">Normative References</a></li>
-<li>9.2.   <a href="#rfc.references.2">Informative References</a></li>
-</ul><li>Appendix A.   <a href="#rfc.appendix.A">Acknowledgements</a></li>
-<li>Appendix B.   <a href="#rfc.appendix.B">Changes</a></li>
-<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since the beginning of time</a></li>
-</ul><li><a href="#rfc.authors">Author's Address</a></li>
+  	<li>1.   <a href="#rfc.section.1">Introduction</a>
+</li>
+<ul><li>1.1.   <a href="#rfc.section.1.1">Wait. Don&#8217;t we have cookies?</a>
+</li>
+<li>1.2.   <a href="#rfc.section.1.2">Examples</a>
+</li>
+</ul><li>2.   <a href="#rfc.section.2">Conventions</a>
+</li>
+<ul><li>2.1.   <a href="#rfc.section.2.1">Conformance</a>
+</li>
+<li>2.2.   <a href="#rfc.section.2.2">Syntax</a>
+</li>
+</ul><li>3.   <a href="#rfc.section.3">Infrastructure</a>
+</li>
+<ul><li>3.1.   <a href="#rfc.section.3.1">HTTP State Tokens</a>
+</li>
+<li>3.2.   <a href="#rfc.section.3.2">Requests and Responses</a>
+</li>
+<li>3.3.   <a href="#rfc.section.3.3">Token Storage</a>
+</li>
+</ul><li>4.   <a href="#rfc.section.4">Syntax</a>
+</li>
+<ul><li>4.1.   <a href="#rfc.section.4.1">The &#8216;Sec-Http-State&#8217; HTTP Header Field</a>
+</li>
+<li>4.2.   <a href="#rfc.section.4.2">The &#8216;Sec-Http-State-Options&#8217; HTTP Header Field</a>
+</li>
+</ul><li>5.   <a href="#rfc.section.5">Delivering HTTP State Tokens</a>
+</li>
+<ul><li>5.1.   <a href="#rfc.section.5.1">Attach HTTP State Tokens to a request</a>
+</li>
+<li>5.2.   <a href="#rfc.section.5.2">Generate a request&#8217;s signature</a>
+</li>
+</ul><li>6.   <a href="#rfc.section.6">Configuring HTTP State Tokens</a>
+</li>
+<li>7.   <a href="#rfc.section.7">Security and Privacy Considerations</a>
+</li>
+<ul><li>7.1.   <a href="#rfc.section.7.1">Confidentiality and Integrity</a>
+</li>
+<li>7.2.   <a href="#rfc.section.7.2">Signed Sessions</a>
+</li>
+<li>7.3.   <a href="#rfc.section.7.3">User Control</a>
+</li>
+<li>7.4.   <a href="#rfc.section.7.4">Lifetime</a>
+</li>
+<li>7.5.   <a href="#rfc.section.7.5">Ambient Authority and Cross-Site Delivery</a>
+</li>
+</ul><li>8.   <a href="#rfc.section.8">IANA Considerations</a>
+</li>
+<ul><li>8.1.   <a href="#rfc.section.8.1">Header Field Registry</a>
+</li>
+</ul><li>9.   <a href="#rfc.references">References</a>
+</li>
+<ul><li>9.1.   <a href="#rfc.references.1">Normative References</a>
+</li>
+<li>9.2.   <a href="#rfc.references.2">Informative References</a>
+</li>
+</ul><li>Appendix A.   <a href="#rfc.appendix.A">Acknowledgements</a>
+</li>
+<li>Appendix B.   <a href="#rfc.appendix.B">Changes</a>
+</li>
+<ul><li>B.1.   <a href="#rfc.appendix.B.1">Since the beginning of time</a>
+</li>
+</ul><li><a href="#rfc.authors">Author's Address</a>
+</li>
 
 
   </ul>
 
-  <h1 id="rfc.section.1"><a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a></h1>
-<p id="rfc.section.1.p.1">This document defines a state-management mechanism for HTTP that allows clients to create and persist origin-bound session identifiers that can be delivered to servers in order to enable stateful interaction. In a nutshell, each user agent will generate a single token per secure origin, and will deliver it as a <samp>Sec-Http-State</samp> structured header along with requests to that origin (defined in <a href="#sec-http-state">Section 4.1</a> and <a href="#delivery">Section 5</a>).</p>
-<p id="rfc.section.1.p.2">Servers can configure this token&#8217;s characteristics via a <samp>Sec-Http-State-Options</samp> response header (defined in <a href="#sec-http-state-options">Section 4.2</a> and <a href="#config">Section 6</a>).</p>
+  <h1 id="rfc.section.1">
+<a href="#rfc.section.1">1.</a> <a href="#introduction" id="introduction">Introduction</a>
+</h1>
+<p id="rfc.section.1.p.1">This document defines a state-management mechanism for HTTP that allows clients to create and persist origin-bound session identifiers that can be delivered to servers in order to enable stateful interaction. In a nutshell, each user agent will generate a single token per secure origin, and will deliver it as a <samp>Sec-Http-State</samp> structured header along with requests to that origin (defined in <a href="#sec-http-state" class="xref">Section 4.1</a> and <a href="#delivery" class="xref">Section 5</a>).</p>
+<p id="rfc.section.1.p.2">Servers can configure this token&#8217;s characteristics via a <samp>Sec-Http-State-Options</samp> response header (defined in <a href="#sec-http-state-options" class="xref">Section 4.2</a> and <a href="#config" class="xref">Section 6</a>).</p>
 <p id="rfc.section.1.p.3">That&#8217;s it.</p>
-<h1 id="rfc.section.1.1"><a href="#rfc.section.1.1">1.1.</a> <a href="#wait-dont-we-have-cookies" id="wait-dont-we-have-cookies">Wait. Don&#8217;t we have cookies?</a></h1>
-<p id="rfc.section.1.1.p.1">Cookies <a href="#RFC6265">[RFC6265]</a> are indeed a pervasive HTTP state management mechanism, and they enable practically everything interesting on the web today. That said, cookies have some issues: they&#8217;re hard to use securely, they add substantial weight to users&#8217; outgoing requests, and they enable tracking users&#8217; activity across the web in potentially surprising ways.</p>
+<h1 id="rfc.section.1.1">
+<a href="#rfc.section.1.1">1.1.</a> <a href="#wait-dont-we-have-cookies" id="wait-dont-we-have-cookies">Wait. Don&#8217;t we have cookies?</a>
+</h1>
+<p id="rfc.section.1.1.p.1">Cookies <a href="#RFC6265" class="xref">[RFC6265]</a> are indeed a pervasive HTTP state management mechanism, and they enable practically everything interesting on the web today. That said, cookies have some issues: they&#8217;re hard to use securely, they add substantial weight to users&#8217; outgoing requests, and they enable tracking users&#8217; activity across the web in potentially surprising ways.</p>
 <p id="rfc.section.1.1.p.2">The mechanism proposed in this document aims at a more minimal and opinionated construct which takes inspiration from some of cookies&#8217; optional characteristics. In particular:</p>
-<p/>
+<p></p>
 
 <ol>
-  <li>The client controls the token&#8217;s value, not the server.</li>
-  <li>The token will only be available to the network layer, not to JavaScript (including network-like JavaScript, such as Service Workers).</li>
-  <li>The user agent will generate only one token per origin, and will only expose the token to the origin for which it was generated.</li>
-  <li>Tokens will not be generated for, or delivered to, non-secure origins.</li>
-  <li>Tokens will be delivered only along with same-site requests by default, and can only be created from same-site contexts.</li>
-  <li>Each token persists for one hour after generation by default. This default expiration time can be overwritten by servers, and tokens can be reset at any time by servers, users, or user agents.</li>
+<li>The client controls the token&#8217;s value, not the server.</li>
+<li>The token will only be available to the network layer, not to JavaScript (including network-like JavaScript, such as Service Workers).</li>
+<li>The user agent will generate only one token per origin, and will only expose the token to the origin for which it was generated.</li>
+<li>Tokens will not be generated for, or delivered to, non-secure origins.</li>
+<li>Tokens will be delivered only along with same-site requests by default, and can only be created from same-site contexts.</li>
+<li>Each token persists for one hour after generation by default. This default expiration time can be overwritten by servers, and tokens can be reset at any time by servers, users, or user agents.</li>
 </ol>
-<p id="rfc.section.1.1.p.4">These distinctions might not be appropriate for all use cases, but seem like a reasonable set of defaults. For folks for whom these defaults aren&#8217;t good enough, we&#8217;ll provide developers with a few control points that can be triggered via a <samp>Sec-HTTP-State-Options</samp> HTTP response header, described in <a href="#sec-http-state-options">Section 4.2</a>.</p>
-<h1 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2.</a> <a href="#examples" id="examples">Examples</a></h1>
-<p id="rfc.section.1.2.p.1">User agents can deliver HTTP state tokens to a server in a <samp>Sec-Http-State</samp> header. For example, if a user agent has generated a token bound to <samp>https://example.com/</samp> whose base64 encoding is <samp>hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=</samp> (<a href="#RFC4648">[RFC4648]</a>, Section 4), then it would generate the following header when delivering the token along with requests to <samp>https://example.com/</samp>:</p>
+<p id="rfc.section.1.1.p.4">These distinctions might not be appropriate for all use cases, but seem like a reasonable set of defaults. For folks for whom these defaults aren&#8217;t good enough, we&#8217;ll provide developers with a few control points that can be triggered via a <samp>Sec-HTTP-State-Options</samp> HTTP response header, described in <a href="#sec-http-state-options" class="xref">Section 4.2</a>.</p>
+<h1 id="rfc.section.1.2">
+<a href="#rfc.section.1.2">1.2.</a> <a href="#examples" id="examples">Examples</a>
+</h1>
+<p id="rfc.section.1.2.p.1">User agents can deliver HTTP state tokens to a server in a <samp>Sec-Http-State</samp> header. For example, if a user agent has generated a token bound to <samp>https://example.com/</samp> whose base64 encoding is <samp>hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=</samp> (<a href="#RFC4648" class="xref">[RFC4648]</a>, Section 4), then it would generate the following header when delivering the token along with requests to <samp>https://example.com/</samp>:</p>
 <pre>
 Sec-Http-State: token=*hB2RfWa...GyNko4k=*
 </pre>
@@ -533,107 +472,149 @@ Sec-Http-State: token=*hB2RfWa...GyNko4k=*
 <pre>
 Sec-Http-State-Options: max-age=3600, key=*b7kuUkp...lkRioC2=*
 </pre>
-<h1 id="rfc.section.2"><a href="#rfc.section.2">2.</a> <a href="#conventions" id="conventions">Conventions</a></h1>
-<h1 id="rfc.section.2.1"><a href="#rfc.section.2.1">2.1.</a> <a href="#conformance" id="conformance">Conformance</a></h1>
-<p id="rfc.section.2.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;NOT RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in BCP&#160;14 <a href="#RFC2119">[RFC2119]</a> <a href="#RFC8174">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.</p>
-<h1 id="rfc.section.2.2"><a href="#rfc.section.2.2">2.2.</a> <a href="#syntax" id="syntax">Syntax</a></h1>
-<p id="rfc.section.2.2.p.1">This document defines two Structured Headers <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>. In doing so it relies upon the Augmented Backus-Naur Form (ABNF) notation of <a href="#RFC5234">[RFC5234]</a> and the OWS rule from <a href="#RFC7230">[RFC7230]</a>.</p>
-<h1 id="rfc.section.3"><a href="#rfc.section.3">3.</a> <a href="#infrastructure" id="infrastructure">Infrastructure</a></h1>
-<h1 id="rfc.section.3.1"><a href="#rfc.section.3.1">3.1.</a> <a href="#http-state-tokens" id="http-state-tokens">HTTP State Tokens</a></h1>
+<h1 id="rfc.section.2">
+<a href="#rfc.section.2">2.</a> <a href="#conventions" id="conventions">Conventions</a>
+</h1>
+<h1 id="rfc.section.2.1">
+<a href="#rfc.section.2.1">2.1.</a> <a href="#conformance" id="conformance">Conformance</a>
+</h1>
+<p id="rfc.section.2.1.p.1">The key words &#8220;MUST&#8221;, &#8220;MUST NOT&#8221;, &#8220;REQUIRED&#8221;, &#8220;SHALL&#8221;, &#8220;SHALL NOT&#8221;, &#8220;SHOULD&#8221;, &#8220;SHOULD NOT&#8221;, &#8220;RECOMMENDED&#8221;, &#8220;NOT RECOMMENDED&#8221;, &#8220;MAY&#8221;, and &#8220;OPTIONAL&#8221; in this document are to be interpreted as described in BCP&#160;14 <a href="#RFC2119" class="xref">[RFC2119]</a> <a href="#RFC8174" class="xref">[RFC8174]</a> when, and only when, they appear in all capitals, as shown here.</p>
+<h1 id="rfc.section.2.2">
+<a href="#rfc.section.2.2">2.2.</a> <a href="#syntax" id="syntax">Syntax</a>
+</h1>
+<p id="rfc.section.2.2.p.1">This document defines two Structured Headers <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>. In doing so it relies upon the Augmented Backus-Naur Form (ABNF) notation of <a href="#RFC5234" class="xref">[RFC5234]</a> and the OWS rule from <a href="#RFC7230" class="xref">[RFC7230]</a>.</p>
+<h1 id="rfc.section.3">
+<a href="#rfc.section.3">3.</a> <a href="#infrastructure" id="infrastructure">Infrastructure</a>
+</h1>
+<h1 id="rfc.section.3.1">
+<a href="#rfc.section.3.1">3.1.</a> <a href="#http-state-tokens" id="http-state-tokens">HTTP State Tokens</a>
+</h1>
 <p id="rfc.section.3.1.p.1">An HTTP State Token holds a session identifier which allows a user agent to maintain a stateful session with a specific origin, along with associated metadata:</p>
-<p/>
+<p></p>
 
 <ul>
-  <li><samp>creation</samp> is a timestamp representing the point in time when the token was created.</li>
-  <li><samp>delivery</samp> specifies the initiating contexts from which the token can be delivered. It is an enum of either <samp>same-origin</samp>, <samp>same-site</samp>, or <samp>cross-site</samp>. Unless otherwise specified, its value is <samp>same-site</samp>.</li>
-  <li><samp>key</samp> is a server-provided key which can be used to sign requests with which the token is delivered. It is either null, or contains up to 256-bits of binary data. Unless otherwise specified, its value is null.</li>
-  <li><samp>max-age</samp> is a timestamp representing the token&#8217;s lifetime in seconds. Unless otherwise specified, HTTP State Tokens have a 3600 second (1 hour) <samp>max-age</samp>.</li>
-  <li><samp>value</samp> is the token&#8217;s value (surprising, right?). It contains up to 256-bits of binary data.</li>
+<li>
+<samp>creation</samp> is a timestamp representing the point in time when the token was created.</li>
+<li>
+<samp>delivery</samp> specifies the initiating contexts from which the token can be delivered. It is an enum of either <samp>same-origin</samp>, <samp>same-site</samp>, or <samp>cross-site</samp>. Unless otherwise specified, its value is <samp>same-site</samp>.</li>
+<li>
+<samp>key</samp> is a server-provided key which can be used to sign requests with which the token is delivered. It is either null, or contains up to 256-bits of binary data. Unless otherwise specified, its value is null.</li>
+<li>
+<samp>max-age</samp> is a timestamp representing the token&#8217;s lifetime in seconds. Unless otherwise specified, HTTP State Tokens have a 3600 second (1 hour) <samp>max-age</samp>.</li>
+<li>
+<samp>value</samp> is the token&#8217;s value (surprising, right?). It contains up to 256-bits of binary data.</li>
 </ul>
 <p id="rfc.section.3.1.p.3">An HTTP State Token is said to be &#8220;expired&#8221; if its <samp>creation</samp> timestamp plus <samp>max-age</samp> seconds is in the past.</p>
-<h1 id="rfc.section.3.2"><a href="#rfc.section.3.2">3.2.</a> <a href="#requests-and-responses" id="requests-and-responses">Requests and Responses</a></h1>
-<p id="rfc.section.3.2.p.1">This document relies upon the definitions of &#8220;request&#8221; and &#8220;response&#8221; found in <a href="#Fetch">[Fetch]</a>.</p>
+<h1 id="rfc.section.3.2">
+<a href="#rfc.section.3.2">3.2.</a> <a href="#requests-and-responses" id="requests-and-responses">Requests and Responses</a>
+</h1>
+<p id="rfc.section.3.2.p.1">This document relies upon the definitions of &#8220;request&#8221; and &#8220;response&#8221; found in <a href="#Fetch" class="xref">[Fetch]</a>.</p>
 <p id="rfc.section.3.2.p.2">A request&#8217;s delivery scope can be obtained as follows:</p>
-<p/>
+<p></p>
 
 <ol>
-  <li>Let <samp>request-origin</samp> be the request&#8217;s <samp>origin</samp>, and <samp>target-origin</samp> be the request&#8217;s <samp>URL</samp>&#8217;s <samp>origin</samp>.</li>
-  <li>If the request was generated by the user agent as a response to direct user interaction with the user agent (e.g. the user typed an address into the agent&#8217;s address bar, clicked a bookmark, or etc.), return <samp>same-origin</samp>.</li>
-  <li>If <samp>request-origin</samp> is same-origin with <samp>target-origin</samp>, return <samp>same-origin</samp>.</li>
-  <li>If <samp>request-origin</samp>&#8217;s registrable domain is the same as <samp>target-origin</samp>&#8217;s registrable domain, return <samp>same-site</samp>.</li>
-  <li>Return <samp>cross-site</samp>.</li>
+<li>Let <samp>request-origin</samp> be the request&#8217;s <samp>origin</samp>, and <samp>target-origin</samp> be the request&#8217;s <samp>URL</samp>&#8217;s <samp>origin</samp>.</li>
+<li>If the request was generated by the user agent as a response to direct user interaction with the user agent (e.g. the user typed an address into the agent&#8217;s address bar, clicked a bookmark, or etc.), return <samp>same-origin</samp>.</li>
+<li>If <samp>request-origin</samp> is same-origin with <samp>target-origin</samp>, return <samp>same-origin</samp>.</li>
+<li>If <samp>request-origin</samp>&#8217;s registrable domain is the same as <samp>target-origin</samp>&#8217;s registrable domain, return <samp>same-site</samp>.</li>
+<li>Return <samp>cross-site</samp>.</li>
 </ol>
-<h1 id="rfc.section.3.3"><a href="#rfc.section.3.3">3.3.</a> <a href="#token-storage" id="token-storage">Token Storage</a></h1>
+<h1 id="rfc.section.3.3">
+<a href="#rfc.section.3.3">3.3.</a> <a href="#token-storage" id="token-storage">Token Storage</a>
+</h1>
 <p id="rfc.section.3.3.p.1">User agents MUST keep a list of all the unexpired HTTP State Tokens which have been created. For the purposes of this document, we&#8217;ll assume that user agents keep this list in the form of a map whose keys are origins, and whose values are HTTP State Tokens.</p>
 <p id="rfc.section.3.3.p.2">This map exposes three functions:</p>
-<p/>
+<p></p>
 
 <ul>
-  <li>An HTTP State Token can be stored for a given origin. If the origin already exists in the map, the entry&#8217;s value will be overwritten with the new HTTP State Token.</li>
-  <li>An origin&#8217;s HTTP State Token can be retrieved. If the origin does not exist in the map, <samp>null</samp> will be returned instead.</li>
-  <li>An origin (along with its HTTP State Token) can be deleted from the map.</li>
+<li>An HTTP State Token can be stored for a given origin. If the origin already exists in the map, the entry&#8217;s value will be overwritten with the new HTTP State Token.</li>
+<li>An origin&#8217;s HTTP State Token can be retrieved. If the origin does not exist in the map, <samp>null</samp> will be returned instead.</li>
+<li>An origin (along with its HTTP State Token) can be deleted from the map.</li>
 </ul>
 <p id="rfc.section.3.3.p.4">The map is initially empty.</p>
-<h1 id="rfc.section.3.3.1"><a href="#rfc.section.3.3.1">3.3.1.</a> <a href="#generate" id="generate">Generate an HTTP State Token for an origin</a></h1>
+<h1 id="rfc.section.3.3.1">
+<a href="#rfc.section.3.3.1">3.3.1.</a> <a href="#generate" id="generate">Generate an HTTP State Token for an origin</a>
+</h1>
 <p id="rfc.section.3.3.1.p.1">The user agent can generate a new HTTP State Token for an origin using an algorithm equivalent to the following:</p>
-<p/>
+<p></p>
 
 <ol>
-  <li>Delete <samp>origin</samp> from the user agent&#8217;s token store.</li>
-  <li>Let <samp>token</samp> be a newly created HTTP State Token with its properties set as follows:  <ul><li><samp>creation</samp>: The current time.</li><li><samp>delivery</samp>: <samp>same-site</samp></li><li><samp>key</samp>: null</li><li><samp>max-age</samp>: 3600</li><li><samp>value</samp>: 256 cryptographically random bits.</li></ul></li>
-  <li>Store <samp>token</samp> in the user agent&#8217;s token store for <samp>origin</samp>.</li>
-  <li>If the user agent has defined a <samp>NotifyHostHTTPStateReset()</samp> algorithm, call it with <samp>origin</samp>.</li>
-  <li>Return <samp>token</samp>.</li>
+<li>Delete <samp>origin</samp> from the user agent&#8217;s token store.</li>
+<li>Let <samp>token</samp> be a newly created HTTP State Token with its properties set as follows:  <ul>
+<li>
+<samp>creation</samp>: The current time.</li>
+<li>
+<samp>delivery</samp>: <samp>same-site</samp>
+</li>
+<li>
+<samp>key</samp>: null</li>
+<li>
+<samp>max-age</samp>: 3600</li>
+<li>
+<samp>value</samp>: 256 cryptographically random bits.</li>
+</ul>
+</li>
+<li>Store <samp>token</samp> in the user agent&#8217;s token store for <samp>origin</samp>.</li>
+<li>If the user agent has defined a <samp>NotifyHostHTTPStateReset()</samp> algorithm, call it with <samp>origin</samp>.</li>
+<li>Return <samp>token</samp>.</li>
 </ol>
 <p id="rfc.section.3.3.1.p.3">Note: Step 4 recognizes that user agents may wish to notify an origin&#8217;s developers that HTTP state has been reset in order to enable cleanup of state stored client-side. HTML might, for instance, wish to post a message to a specially-named <samp>BroadcastChannel</samp> to enable this kind of work. This could take something like the following form:</p>
 <pre>
 let resetChannel = new BroadcastChannel('http-state-reset'));
 resetChannel.onmessage = e =&gt; { /* Do exciting cleanup here. */ };
 </pre>
-<h1 id="rfc.section.4"><a href="#rfc.section.4">4.</a> <a href="#syntax-1" id="syntax-1">Syntax</a></h1>
-<h1 id="rfc.section.4.1"><a href="#rfc.section.4.1">4.1.</a> <a href="#sec-http-state" id="sec-http-state">The &#8216;Sec-Http-State&#8217; HTTP Header Field</a></h1>
+<h1 id="rfc.section.4">
+<a href="#rfc.section.4">4.</a> <a href="#syntax-1" id="syntax-1">Syntax</a>
+</h1>
+<h1 id="rfc.section.4.1">
+<a href="#rfc.section.4.1">4.1.</a> <a href="#sec-http-state" id="sec-http-state">The &#8216;Sec-Http-State&#8217; HTTP Header Field</a>
+</h1>
 <p id="rfc.section.4.1.p.1">The <samp>Sec-Http-State</samp> HTTP header field allows user agents to deliver HTTP state tokens to servers as part of an HTTP request.</p>
-<p><samp>Sec-Http-State</samp> is a Structured Header <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>. Its value MUST be a dictionary (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.1). Its ABNF is:</p>
+<p><samp>Sec-Http-State</samp> is a Structured Header <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>. Its value MUST be a dictionary (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.1). Its ABNF is:</p>
 <pre>
 Sec-Http-State = sh-dictionary
 </pre>
 <p id="rfc.section.4.1.p.3">The dictionary MUST contain:</p>
-<p/>
+<p></p>
 
-<ul>
-  <li>Exactly one member whose key is <samp>token</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9) that encodes the HTTP state token&#8217;s value for the origin to which the header is delivered.  <br/><br/> If the <samp>token</samp> member contains more than 256 bits of binary content, the member MUST be ignored.</li>
-</ul>
+<ul><li>Exactly one member whose key is <samp>token</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9) that encodes the HTTP state token&#8217;s value for the origin to which the header is delivered.  <br><br> If the <samp>token</samp> member contains more than 256 bits of binary content, the member MUST be ignored.</li></ul>
 <p id="rfc.section.4.1.p.5">The dictionary MAY contain:</p>
-<p/>
+<p></p>
 
-<ul>
-  <li>Exactly one member whose key is <samp>sig</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9) that encodes a signature over the token and the request which contains it, using a key previously delivered by the server. This mechanism is described in <a href="#sign">Section 5.2</a>.  <br/><br/> If the <samp>sig</samp> member contains more than 256 bits of binary content, the member MUST be ignored.</li>
-</ul>
-<p id="rfc.section.4.1.p.7">The <samp>Sec-Http-State</samp> header is parsed per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>. Servers MUST ignore the header if parsing fails, or if the parsed header does not contain a member whose key is <samp>token</samp>.</p>
-<p id="rfc.section.4.1.p.8">User agents will attach a <samp>Sec-Http-State</samp> header to outgoing requests according to the processing rules described in <a href="#delivery">Section 5</a>.</p>
-<h1 id="rfc.section.4.2"><a href="#rfc.section.4.2">4.2.</a> <a href="#sec-http-state-options" id="sec-http-state-options">The &#8216;Sec-Http-State-Options&#8217; HTTP Header Field</a></h1>
+<ul><li>Exactly one member whose key is <samp>sig</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9) that encodes a signature over the token and the request which contains it, using a key previously delivered by the server. This mechanism is described in <a href="#sign" class="xref">Section 5.2</a>.  <br><br> If the <samp>sig</samp> member contains more than 256 bits of binary content, the member MUST be ignored.</li></ul>
+<p id="rfc.section.4.1.p.7">The <samp>Sec-Http-State</samp> header is parsed per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>. Servers MUST ignore the header if parsing fails, or if the parsed header does not contain a member whose key is <samp>token</samp>.</p>
+<p id="rfc.section.4.1.p.8">User agents will attach a <samp>Sec-Http-State</samp> header to outgoing requests according to the processing rules described in <a href="#delivery" class="xref">Section 5</a>.</p>
+<h1 id="rfc.section.4.2">
+<a href="#rfc.section.4.2">4.2.</a> <a href="#sec-http-state-options" id="sec-http-state-options">The &#8216;Sec-Http-State-Options&#8217; HTTP Header Field</a>
+</h1>
 <p id="rfc.section.4.2.p.1">The <samp>Sec-Http-State-Options</samp> HTTP header field allows servers to deliver configuration information to user agents as part of an HTTP response.</p>
-<p><samp>Sec-Http-State-Options</samp> is a Structured Header <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>. Its value MUST be a dictionary (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.1). Its ABNF is:</p>
+<p><samp>Sec-Http-State-Options</samp> is a Structured Header <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>. Its value MUST be a dictionary (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.1). Its ABNF is:</p>
 <pre>
 Sec-Http-State-Options = sh-dictionary
 </pre>
-<p id="rfc.section.4.2.p.3">The <samp>Sec-Http-State-Options</samp> header is parsed per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>. User agents MUST ignore the header if parsing fails.</p>
+<p id="rfc.section.4.2.p.3">The <samp>Sec-Http-State-Options</samp> header is parsed per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>. User agents MUST ignore the header if parsing fails.</p>
 <p id="rfc.section.4.2.p.4">The dictionary MAY contain:</p>
-<p/>
+<p></p>
 
 <ul>
-  <li>Exactly one member whose key is <samp>key</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.10) that encodes an key which can be used to generate a signature over outgoing requests.</li>
-  <li>Exactly one member whose key is <samp>delivery</samp>, and whose value is one of the following tokens (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9): <samp>same-origin</samp>, <samp>same-site</samp>, or <samp>cross-site</samp>.  <br/><br/> If the <samp>delivery</samp> member contains an unknown identifier, the member MUST be ignored.</li>
-  <li>Exactly one member whose key is <samp>max-age</samp>, and whose value is an integer (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 3.6) representing the server&#8217;s desired lifetime for its HTTP State Token.  <br/><br/> If the <samp>max-age</samp> member contains anything other than a positive integer, the member MUST be ignored.</li>
+<li>Exactly one member whose key is <samp>key</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.10) that encodes an key which can be used to generate a signature over outgoing requests.</li>
+<li>Exactly one member whose key is <samp>delivery</samp>, and whose value is one of the following tokens (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9): <samp>same-origin</samp>, <samp>same-site</samp>, or <samp>cross-site</samp>.  <br><br> If the <samp>delivery</samp> member contains an unknown identifier, the member MUST be ignored.</li>
+<li>Exactly one member whose key is <samp>max-age</samp>, and whose value is an integer (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.6) representing the server&#8217;s desired lifetime for its HTTP State Token.  <br><br> If the <samp>max-age</samp> member contains anything other than a positive integer, the member MUST be ignored.</li>
 </ul>
-<p id="rfc.section.4.2.p.6">User agents will process the <samp>Sec-Http-State-Options</samp> header on incoming responses according to the processing rules described in <a href="#config">Section 6</a>.</p>
-<h1 id="rfc.section.4.2.1"><a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#examples-1" id="examples-1">Examples</a></h1>
-<h1 id="rfc.section.4.2.1.1"><a href="#rfc.section.4.2.1.1">4.2.1.1.</a> <a href="#cross-site-delivery" id="cross-site-delivery">Cross-Site Delivery</a></h1>
+<p id="rfc.section.4.2.p.6">User agents will process the <samp>Sec-Http-State-Options</samp> header on incoming responses according to the processing rules described in <a href="#config" class="xref">Section 6</a>.</p>
+<h1 id="rfc.section.4.2.1">
+<a href="#rfc.section.4.2.1">4.2.1.</a> <a href="#examples-1" id="examples-1">Examples</a>
+</h1>
+<h1 id="rfc.section.4.2.1.1">
+<a href="#rfc.section.4.2.1.1">4.2.1.1.</a> <a href="#cross-site-delivery" id="cross-site-delivery">Cross-Site Delivery</a>
+</h1>
 <p id="rfc.section.4.2.1.1.p.1">Some servers will require access to their tokens from cross-site contexts (perhaps to support authenticated activity or single-sign on, etc). These servers can request a <samp>cross-site</samp> delivery option by delivering the following header:</p>
 <pre>
 Sec-Http-State-Options: delivery=cross-site, ...
 </pre>
-<h1 id="rfc.section.4.2.1.2"><a href="#rfc.section.4.2.1.2">4.2.1.2.</a> <a href="#token-lifetime" id="token-lifetime">Token Lifetime</a></h1>
+<h1 id="rfc.section.4.2.1.2">
+<a href="#rfc.section.4.2.1.2">4.2.1.2.</a> <a href="#token-lifetime" id="token-lifetime">Token Lifetime</a>
+</h1>
 <p id="rfc.section.4.2.1.2.p.1">Other servers might want their sessions to persist for more than an hour. These servers can request a more reasonable token lifetime lifetime by by delivering the following header:</p>
 <pre>
 Sec-Http-State-Options: max-age=2592000, ...
@@ -642,7 +623,9 @@ Sec-Http-State-Options: max-age=2592000, ...
 <pre>
 Sec-Http-State-Options: max-age=0, ...
 </pre>
-<h1 id="rfc.section.4.2.1.3"><a href="#rfc.section.4.2.1.3">4.2.1.3.</a> <a href="#token-provenance" id="token-provenance">Token Provenance</a></h1>
+<h1 id="rfc.section.4.2.1.3">
+<a href="#rfc.section.4.2.1.3">4.2.1.3.</a> <a href="#token-provenance" id="token-provenance">Token Provenance</a>
+</h1>
 <p id="rfc.section.4.2.1.3.p.1">For some servers, the client-generated token will be enough to maintain state. They can treat it as an opaque session identifier, and bind the user&#8217;s state to it server-side. Other servers will require additional assurance that they can trust the token&#8217;s provenance. To that end, servers can generate a unique key, associate it with the session identifier on the server, and deliver it to the client via an HTTP response header:</p>
 <pre>
 Sec-Http-State-Options: key=*ZH0GxtBMWA...nJudhZ8dtz*, ...
@@ -654,43 +637,61 @@ Sec-HTTP-State:
     sig=*(HMAC-SHA265(key, token+metadata))*
 </pre>
 <p id="rfc.section.4.2.1.3.p.3">Note: This part in particular is not fully baked, and we need to do some more work to flesh out the threat model (see also Token Binding). Look at it as an area to explore, not a solidly thought-out solution.</p>
-<h1 id="rfc.section.5"><a href="#rfc.section.5">5.</a> <a href="#delivery" id="delivery">Delivering HTTP State Tokens</a></h1>
+<h1 id="rfc.section.5">
+<a href="#rfc.section.5">5.</a> <a href="#delivery" id="delivery">Delivering HTTP State Tokens</a>
+</h1>
 <p id="rfc.section.5.p.1">User agents deliver HTTP state tokens to servers by appending a <samp>Sec-Http-State</samp> header field to outgoing requests.</p>
-<p id="rfc.section.5.p.2">This specification provides algorithms which are called at the appropriate points in <a href="#Fetch">[Fetch]</a> in order to attach <samp>Sec-Http-State</samp> headers to outgoing requests, and to ensure that <samp>Sec-Http-State-Options</samp> headers are correctly processed.</p>
-<h1 id="rfc.section.5.1"><a href="#rfc.section.5.1">5.1.</a> <a href="#attach" id="attach">Attach HTTP State Tokens to a request</a></h1>
-<p id="rfc.section.5.1.p.1">The user agent can attach HTTP State Tokens to a given request using an algorithm equivalent to the following. This algorithm is intended to execute as the request is being sent out over the network (after Service Worker processing), perhaps after the <samp>Cookie</samp> header is handled in step 5.17.1 of Section 4.5 of <a href="#Fetch">[Fetch]</a>, describing the &#8220;HTTP-network-or-cache fetch&#8221; algorithm:</p>
-<p/>
+<p id="rfc.section.5.p.2">This specification provides algorithms which are called at the appropriate points in <a href="#Fetch" class="xref">[Fetch]</a> in order to attach <samp>Sec-Http-State</samp> headers to outgoing requests, and to ensure that <samp>Sec-Http-State-Options</samp> headers are correctly processed.</p>
+<h1 id="rfc.section.5.1">
+<a href="#rfc.section.5.1">5.1.</a> <a href="#attach" id="attach">Attach HTTP State Tokens to a request</a>
+</h1>
+<p id="rfc.section.5.1.p.1">The user agent can attach HTTP State Tokens to a given request using an algorithm equivalent to the following. This algorithm is intended to execute as the request is being sent out over the network (after Service Worker processing), perhaps after the <samp>Cookie</samp> header is handled in step 5.17.1 of Section 4.5 of <a href="#Fetch" class="xref">[Fetch]</a>, describing the &#8220;HTTP-network-or-cache fetch&#8221; algorithm:</p>
+<p></p>
 
 <ol>
-  <li>If the user agent is configured to suppress explicit identifiers for the request, or if the request&#8217;s URL is not <em>a priori</em> authenticated <a href="#Mixed-Content">[Mixed-Content]</a>, then skip the remaining steps in this algorithm, and return without modifying the request.</li>
-  <li>Let <samp>target-origin</samp> be the origin of <samp>request</samp>&#8217;s current URL.</li>
-  <li>Let <samp>request-token</samp> be the result of retrieving origin&#8217;s token from the user agent&#8217;s token store, or <samp>null</samp> if no such token exists.</li>
-  <li>If <samp>request-token</samp> is expired, clear the user agent&#8217;s token store for <samp>target-origin</samp>, and set <samp>request-token</samp> to <samp>null</samp>.</li>
-  <li>If <samp>request-token</samp> is <samp>null</samp>, then:  <ol><li>If <samp>request</samp>&#8217;s delivery scope is <samp>cross-site</samp>, return without modifying the request.      <br/><br/> Note: As the default <samp>delivery</samp> for HTTP State Tokens is <samp>same-site</samp>, we return early rather than generating a token for a cross-site request.</li><li>Set <samp>request-token</samp> to the result of generating an HTTP State Token for <samp>target-origin</samp>, as defined in <a href="#generate">Section 3.3.1</a>.</li></ol></li>
-  <li>Return without modifying the request if either of the following statements are true:  <ul><li><samp>request-token</samp>&#8217;s <samp>delivery</samp> is <samp>same-origin</samp>, and <samp>request</samp>&#8217;s delivery scope is not <samp>same-origin</samp>.</li><li><samp>request-token</samp>&#8217;s <samp>delivery</samp> is <samp>same-site</samp>, and <samp>request</samp>&#8217;s delivery scope is neither <samp>same-origin</samp> nor <samp>same-site</samp>.</li></ul></li>
-  <li>Let <samp>serialized-value</samp> be the base64 encoding (<a href="#RFC4648">[RFC4648]</a>, Section 4) of <samp>request-token</samp>&#8217;s value.</li>
-  <li>Insert a member into <samp>header-value</samp> whose key is <samp>token</samp> and whose value is <samp>serialized-value</samp>.</li>
-  <li>If <samp>request-token</samp>&#8217;s <samp>key</samp> is not null, then insert a member into <samp>header-value</samp> whose key is <samp>sig</samp>, and whose value is the result of executing <a href="#sign">Section 5.2</a> on request, <samp>serialized-value</samp>, and <samp>request-token</samp>&#8217;s <samp>key</samp>.</li>
-  <li>Append a header to <samp>request</samp>&#8217;s header list whose name is <samp>Sec-Http-State</samp>, and whose value is the result of serializing <samp>header-value</samp> (<a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>, Section 4.1).</li>
+<li>If the user agent is configured to suppress explicit identifiers for the request, or if the request&#8217;s URL is not <em>a priori</em> authenticated <a href="#Mixed-Content" class="xref">[Mixed-Content]</a>, then skip the remaining steps in this algorithm, and return without modifying the request.</li>
+<li>Let <samp>target-origin</samp> be the origin of <samp>request</samp>&#8217;s current URL.</li>
+<li>Let <samp>request-token</samp> be the result of retrieving origin&#8217;s token from the user agent&#8217;s token store, or <samp>null</samp> if no such token exists.</li>
+<li>If <samp>request-token</samp> is expired, clear the user agent&#8217;s token store for <samp>target-origin</samp>, and set <samp>request-token</samp> to <samp>null</samp>.</li>
+<li>If <samp>request-token</samp> is <samp>null</samp>, then:  <ol>
+<li>If <samp>request</samp>&#8217;s delivery scope is <samp>cross-site</samp>, return without modifying the request.      <br><br> Note: As the default <samp>delivery</samp> for HTTP State Tokens is <samp>same-site</samp>, we return early rather than generating a token for a cross-site request.</li>
+<li>Set <samp>request-token</samp> to the result of generating an HTTP State Token for <samp>target-origin</samp>, as defined in <a href="#generate" class="xref">Section 3.3.1</a>.</li>
 </ol>
-<h1 id="rfc.section.5.2"><a href="#rfc.section.5.2">5.2.</a> <a href="#sign" id="sign">Generate a request&#8217;s signature</a></h1>
+</li>
+<li>Return without modifying the request if either of the following statements are true:  <ul>
+<li>
+<samp>request-token</samp>&#8217;s <samp>delivery</samp> is <samp>same-origin</samp>, and <samp>request</samp>&#8217;s delivery scope is not <samp>same-origin</samp>.</li>
+<li>
+<samp>request-token</samp>&#8217;s <samp>delivery</samp> is <samp>same-site</samp>, and <samp>request</samp>&#8217;s delivery scope is neither <samp>same-origin</samp> nor <samp>same-site</samp>.</li>
+</ul>
+</li>
+<li>Let <samp>serialized-value</samp> be the base64 encoding (<a href="#RFC4648" class="xref">[RFC4648]</a>, Section 4) of <samp>request-token</samp>&#8217;s value.</li>
+<li>Insert a member into <samp>header-value</samp> whose key is <samp>token</samp> and whose value is <samp>serialized-value</samp>.</li>
+<li>If <samp>request-token</samp>&#8217;s <samp>key</samp> is not null, then insert a member into <samp>header-value</samp> whose key is <samp>sig</samp>, and whose value is the result of executing <a href="#sign" class="xref">Section 5.2</a> on request, <samp>serialized-value</samp>, and <samp>request-token</samp>&#8217;s <samp>key</samp>.</li>
+<li>Append a header to <samp>request</samp>&#8217;s header list whose name is <samp>Sec-Http-State</samp>, and whose value is the result of serializing <samp>header-value</samp> (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 4.1).</li>
+</ol>
+<h1 id="rfc.section.5.2">
+<a href="#rfc.section.5.2">5.2.</a> <a href="#sign" id="sign">Generate a request&#8217;s signature</a>
+</h1>
 <p id="rfc.section.5.2.p.1">If the origin server provides a <samp>key</samp>, the user agent will use it to sign any outgoing requests which target that origin and include an HTTP State Token. Note that the signature is produced before adding the <samp>Sec-Http-State</samp> header to the request.</p>
 <p id="rfc.section.5.2.p.2">Given a request, a base64-encoded token value, and a key:</p>
-<p/>
+<p></p>
 
 <ol>
-  <li>Let <samp>cbor-request</samp> be the result of building a CBOR representation <a href="#RFC7409">[RFC7409]</a> of the given request, as specified in the first element of the array described in Section 3.2 of <a href="#I-D.yasskin-http-origin-signed-responses">[I-D.yasskin-http-origin-signed-responses]</a>.</li>
-  <li>Add an item to <samp>cbor-request</samp> which maps the byte string &#8216;:token&#8217; to the byte string containing the given base64-encoded token value.</li>
-  <li>Return the result of computing HMAC-SHA256 <a href="#RFC2104">[RFC2104]</a> over the canonical CBOR serialization of <samp>cbor-request</samp> (Section 3.4 of <a href="#I-D.yasskin-http-origin-signed-responses">[I-D.yasskin-http-origin-signed-responses]</a>), using the given <samp>key</samp>.</li>
+<li>Let <samp>cbor-request</samp> be the result of building a CBOR representation <a href="#RFC7409" class="xref">[RFC7409]</a> of the given request, as specified in the first element of the array described in Section 3.2 of <a href="#I-D.yasskin-http-origin-signed-responses" class="xref">[I-D.yasskin-http-origin-signed-responses]</a>.</li>
+<li>Add an item to <samp>cbor-request</samp> which maps the byte string &#8216;:token&#8217; to the byte string containing the given base64-encoded token value.</li>
+<li>Return the result of computing HMAC-SHA256 <a href="#RFC2104" class="xref">[RFC2104]</a> over the canonical CBOR serialization of <samp>cbor-request</samp> (Section 3.4 of <a href="#I-D.yasskin-http-origin-signed-responses" class="xref">[I-D.yasskin-http-origin-signed-responses]</a>), using the given <samp>key</samp>.</li>
 </ol>
-<h1 id="rfc.section.5.2.1"><a href="#rfc.section.5.2.1">5.2.1.</a> <a href="#example" id="example">Example</a></h1>
+<h1 id="rfc.section.5.2.1">
+<a href="#rfc.section.5.2.1">5.2.1.</a> <a href="#example" id="example">Example</a>
+</h1>
 <p id="rfc.section.5.2.1.p.1">The following request:</p>
 <pre>
 GET / HTTP/1.1
 Host: example.com
 Accept: */*
 </pre>
-<p id="rfc.section.5.2.1.p.2">results in the following CBOR representation (represented using the extended diagnostic notation from Appendix G of <a href="#I-D.ietf-cbor-cddl">[I-D.ietf-cbor-cddl]</a>):</p>
+<p id="rfc.section.5.2.1.p.2">results in the following CBOR representation (represented using the extended diagnostic notation from Appendix G of <a href="#I-D.ietf-cbor-cddl" class="xref">[I-D.ietf-cbor-cddl]</a>):</p>
 <pre>
 {
   ':method': 'GET',
@@ -699,190 +700,219 @@ Accept: */*
   'accept': '*/*',
 }
 </pre>
-<h1 id="rfc.section.6"><a href="#rfc.section.6">6.</a> <a href="#config" id="config">Configuring HTTP State Tokens</a></h1>
+<h1 id="rfc.section.6">
+<a href="#rfc.section.6">6.</a> <a href="#config" id="config">Configuring HTTP State Tokens</a>
+</h1>
 <p id="rfc.section.6.p.1">Servers configure the HTTP State Token representing a given users&#8217; state by appending a <samp>Sec-Http-State-Options</samp> header field to outgoing responses.</p>
-<p id="rfc.section.6.p.2">User agents MUST process this header on a given response as per the following algorithm, which is intended to be called after the <samp>Set-Cookie</samp> header is handled in step 11.4 of Section 4.6 of <a href="#Fetch">[Fetch]</a>, which defines the &#8220;HTTP-network fetch&#8221; algorithm.</p>
-<p/>
+<p id="rfc.section.6.p.2">User agents MUST process this header on a given response as per the following algorithm, which is intended to be called after the <samp>Set-Cookie</samp> header is handled in step 11.4 of Section 4.6 of <a href="#Fetch" class="xref">[Fetch]</a>, which defines the &#8220;HTTP-network fetch&#8221; algorithm.</p>
+<p></p>
 
 <ol>
-  <li>Let <samp>response-origin</samp> be the origin of response&#8217;s URL.</li>
-  <li>If the response&#8217;s URL is not <em>a priori</em> authenticated <a href="#Mixed-Content">[Mixed-Content]</a>, return without altering <samp>response-origin</samp>&#8217;s HTTP State Token.</li>
-  <li>Let <samp>token</samp> be the result of retrieving <samp>response-origin</samp>&#8217;s token from the user agent&#8217;s token store, or <samp>null</samp> if no such token exists.</li>
-  <li>If <samp>token</samp> is expired, clear the user agent&#8217;s token store for <samp>response-origin</samp>, and set <samp>token</samp> to <samp>null</samp>.</li>
-  <li>If <samp>token</samp> is <samp>null</samp>, then:  <ol><li>If <samp>request</samp>&#8217;s delivery scope is <samp>cross-site</samp>, return without modifying the request.      <br/><br/> Note: As the default <samp>delivery</samp> for HTTP State Tokens is <samp>same-site</samp>, we return early rather than generating a token for a cross-site request.</li><li>Set <samp>token</samp> to the result of generating an HTTP State Token for <samp>target-origin</samp>, as defined in <a href="#generate">Section 3.3.1</a>.</li></ol></li>
-  <li>If the response&#8217;s header list contains <samp>Sec-Http-State-Options</samp>, then:  <ol><li>Let <samp>header</samp> be the result of getting response&#8217;s <samp>Sec-Http-State-Options</samp> header, and parsing parsing it per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>.</li><li>Return without altering <samp>response-origin</samp>&#8217;s HTTP State Token if any of the following conditions hold:      <ul><li>Parsing the header results in failure.</li><li><samp>header</samp> has a member named <samp>key</samp> whose value is not a byte sequence (Section 3.10 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>)</li><li><samp>header</samp> has a member named <samp>delivery</samp> whose value is not one of the following tokens (Section 3.9 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>): &#8220;same-origin&#8221;, &#8220;same-site&#8221;, and &#8220;cross-site&#8221;.</li><li><samp>header</samp> has a member named <samp>max-age</samp> whose value is not a positive integer (Section 3.6 of <a href="#I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</a>).</li></ul></li><li>If <samp>header</samp> has a member named <samp>key</samp>, set <samp>token</samp>&#8217;s <samp>key</samp> to the member&#8217;s value.</li><li>If <samp>header</samp> has a member named <samp>delivery</samp>, set <samp>token</samp>&#8217;s <samp>delivery</samp> to the member&#8217;s value.</li><li>If <samp>header</samp> has a member named <samp>max-age</samp>:      <ol><li>If the member&#8217;s value is <samp>0</samp>, generate a new HTTP State Token for <samp>response-origin</samp> as defined in <a href="#generate">Section 3.3.1</a>.          <br/><br/> Otherwise, set <samp>token</samp>&#8217;s <samp>max-age</samp> to the member&#8217;s value.</li></ol><p> Note that </p><samp>max-age</samp> is processed last, meaning that any other options specified alongside <samp>max-age=0</samp> will be de facto ignored as a new token is generated, replacing the old.</li></ol></li>
+<li>Let <samp>response-origin</samp> be the origin of response&#8217;s URL.</li>
+<li>If the response&#8217;s URL is not <em>a priori</em> authenticated <a href="#Mixed-Content" class="xref">[Mixed-Content]</a>, return without altering <samp>response-origin</samp>&#8217;s HTTP State Token.</li>
+<li>Let <samp>token</samp> be the result of retrieving <samp>response-origin</samp>&#8217;s token from the user agent&#8217;s token store, or <samp>null</samp> if no such token exists.</li>
+<li>If <samp>token</samp> is expired, clear the user agent&#8217;s token store for <samp>response-origin</samp>, and set <samp>token</samp> to <samp>null</samp>.</li>
+<li>If <samp>token</samp> is <samp>null</samp>, then:  <ol>
+<li>If <samp>request</samp>&#8217;s delivery scope is <samp>cross-site</samp>, return without modifying the request.      <br><br> Note: As the default <samp>delivery</samp> for HTTP State Tokens is <samp>same-site</samp>, we return early rather than generating a token for a cross-site request.</li>
+<li>Set <samp>token</samp> to the result of generating an HTTP State Token for <samp>target-origin</samp>, as defined in <a href="#generate" class="xref">Section 3.3.1</a>.</li>
 </ol>
-<h1 id="rfc.section.7"><a href="#rfc.section.7">7.</a> <a href="#security-and-privacy-considerations" id="security-and-privacy-considerations">Security and Privacy Considerations</a></h1>
-<p id="rfc.section.7.p.1">HTTP State Tokens aim to mitigate some of the security and privacy drawbacks that decades of implementation experience with cookies have laid bare. It would be worthwhile to skim through the privacy considerations (Section 7 of <a href="#RFC6265">[RFC6265]</a>) and security considerations (Section 8 of <a href="#RFC6265">[RFC6265]</a>) of that existing state management mechanism, as it forms a foundation upon which this document builds.</p>
-<h1 id="rfc.section.7.1"><a href="#rfc.section.7.1">7.1.</a> <a href="#confidentiality-and-integrity" id="confidentiality-and-integrity">Confidentiality and Integrity</a></h1>
-<p id="rfc.section.7.1.p.1">HTTP State Tokens improve upon cookies&#8217; weak confidentiality/integrity guarantees (see Sections 8.3, 8.5, 8.6, and 8.7 of <a href="#RFC6265">[RFC6265]</a>) in several ways:</p>
-<p/>
+</li>
+<li>If the response&#8217;s header list contains <samp>Sec-Http-State-Options</samp>, then:  <ol>
+<li>Let <samp>header</samp> be the result of getting response&#8217;s <samp>Sec-Http-State-Options</samp> header, and parsing parsing it per the algorithm in Section 4.2 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>.</li>
+<li>Return without altering <samp>response-origin</samp>&#8217;s HTTP State Token if any of the following conditions hold:      <ul>
+<li>Parsing the header results in failure.</li>
+<li>
+<samp>header</samp> has a member named <samp>key</samp> whose value is not a byte sequence (Section 3.10 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>)</li>
+<li>
+<samp>header</samp> has a member named <samp>delivery</samp> whose value is not one of the following tokens (Section 3.9 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>): &#8220;same-origin&#8221;, &#8220;same-site&#8221;, and &#8220;cross-site&#8221;.</li>
+<li>
+<samp>header</samp> has a member named <samp>max-age</samp> whose value is not a positive integer (Section 3.6 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>).</li>
+</ul>
+</li>
+<li>If <samp>header</samp> has a member named <samp>key</samp>, set <samp>token</samp>&#8217;s <samp>key</samp> to the member&#8217;s value.</li>
+<li>If <samp>header</samp> has a member named <samp>delivery</samp>, set <samp>token</samp>&#8217;s <samp>delivery</samp> to the member&#8217;s value.</li>
+<li>If <samp>header</samp> has a member named <samp>max-age</samp>:      <ol><li>If the member&#8217;s value is <samp>0</samp>, generate a new HTTP State Token for <samp>response-origin</samp> as defined in <a href="#generate" class="xref">Section 3.3.1</a>.          <br><br> Otherwise, set <samp>token</samp>&#8217;s <samp>max-age</samp> to the member&#8217;s value.</li></ol>
+<p> Note that </p>
+<samp>max-age</samp> is processed last, meaning that any other options specified alongside <samp>max-age=0</samp> will be de facto ignored as a new token is generated, replacing the old.</li>
+</ol>
+</li>
+</ol>
+<h1 id="rfc.section.7">
+<a href="#rfc.section.7">7.</a> <a href="#security-and-privacy-considerations" id="security-and-privacy-considerations">Security and Privacy Considerations</a>
+</h1>
+<p id="rfc.section.7.p.1">HTTP State Tokens aim to mitigate some of the security and privacy drawbacks that decades of implementation experience with cookies have laid bare. It would be worthwhile to skim through the privacy considerations (Section 7 of <a href="#RFC6265" class="xref">[RFC6265]</a>) and security considerations (Section 8 of <a href="#RFC6265" class="xref">[RFC6265]</a>) of that existing state management mechanism, as it forms a foundation upon which this document builds.</p>
+<h1 id="rfc.section.7.1">
+<a href="#rfc.section.7.1">7.1.</a> <a href="#confidentiality-and-integrity" id="confidentiality-and-integrity">Confidentiality and Integrity</a>
+</h1>
+<p id="rfc.section.7.1.p.1">HTTP State Tokens improve upon cookies&#8217; weak confidentiality/integrity guarantees (see Sections 8.3, 8.5, 8.6, and 8.7 of <a href="#RFC6265" class="xref">[RFC6265]</a>) in several ways:</p>
+<p></p>
 
 <ol>
-  <li>User agents MUST require secure channels (such as TLS) for delivery and configuration of HTTP State Tokens. User agents cannot be induced to deliver an origin&#8217;s tokens across channels visible to (and modifiable by) network attackers, nor can an attack on DNS cause tokens to be revealed (as any server to which the user could be directed will also need to authenticate itself, which is presumably difficult).</li>
-  <li>HTTP State Tokens are mapped to origins, matching developers expectations for client-side data generally. This ensures that tokens are isolated by host and port: code running on <samp>https://bar.example.com/</samp> cannot alter state on <samp>https://foo.example.com/</samp> without the latter&#8217;s cooperation, and that the same applies to <samp>https://example.com:8000/</samp> and <samp>https://example.com:80/</samp>.  <br/><br/> Note that this origin binding means that there are no path restrictions for tokens. Servers relying upon these tokens for state management SHOULD NOT run mutually distrusting services on different paths of the same origin.</li>
-  <li>User agents MUST NOT expose HTTP State Tokens to non-HTTP APIs which are web-accessible, thereby reducing the risk of accidental exposure via cross-site scripting attack.  <br/><br/> Further, the <samp>Sec-</samp> prefix on both <samp>Sec-HTTP-State</samp> and <samp>Sec-HTTP-State-Options</samp> ensures that both are considered &#8220;forbidden header names&#8221; by <a href="#Fetch">[Fetch]</a>. The latter should also be treated as a &#8220;forbidden response header&#8221;.</li>
+<li>User agents MUST require secure channels (such as TLS) for delivery and configuration of HTTP State Tokens. User agents cannot be induced to deliver an origin&#8217;s tokens across channels visible to (and modifiable by) network attackers, nor can an attack on DNS cause tokens to be revealed (as any server to which the user could be directed will also need to authenticate itself, which is presumably difficult).</li>
+<li>HTTP State Tokens are mapped to origins, matching developers expectations for client-side data generally. This ensures that tokens are isolated by host and port: code running on <samp>https://bar.example.com/</samp> cannot alter state on <samp>https://foo.example.com/</samp> without the latter&#8217;s cooperation, and that the same applies to <samp>https://example.com:8000/</samp> and <samp>https://example.com:80/</samp>.  <br><br> Note that this origin binding means that there are no path restrictions for tokens. Servers relying upon these tokens for state management SHOULD NOT run mutually distrusting services on different paths of the same origin.</li>
+<li>User agents MUST NOT expose HTTP State Tokens to non-HTTP APIs which are web-accessible, thereby reducing the risk of accidental exposure via cross-site scripting attack.  <br><br> Further, the <samp>Sec-</samp> prefix on both <samp>Sec-HTTP-State</samp> and <samp>Sec-HTTP-State-Options</samp> ensures that both are considered &#8220;forbidden header names&#8221; by <a href="#Fetch" class="xref">[Fetch]</a>. The latter should also be treated as a &#8220;forbidden response header&#8221;.</li>
 </ol>
-<h1 id="rfc.section.7.2"><a href="#rfc.section.7.2">7.2.</a> <a href="#signed-sessions" id="signed-sessions">Signed Sessions</a></h1>
-<p id="rfc.section.7.2.p.1">HTTP State Tokens embrace the session identifier pattern discussed in Section 8.4 of <a href="#RFC6265">[RFC6265]</a> by requiring that the client control the token&#8217;s value, setting it to a fixed-length, random byte sequence. The client&#8217;s control mitigates the risk of sensitive information being stored in the token directly, and the token&#8217;s length makes it unlikely to be easily guessed.</p>
+<h1 id="rfc.section.7.2">
+<a href="#rfc.section.7.2">7.2.</a> <a href="#signed-sessions" id="signed-sessions">Signed Sessions</a>
+</h1>
+<p id="rfc.section.7.2.p.1">HTTP State Tokens embrace the session identifier pattern discussed in Section 8.4 of <a href="#RFC6265" class="xref">[RFC6265]</a> by requiring that the client control the token&#8217;s value, setting it to a fixed-length, random byte sequence. The client&#8217;s control mitigates the risk of sensitive information being stored in the token directly, and the token&#8217;s length makes it unlikely to be easily guessed.</p>
 <p id="rfc.section.7.2.p.2">Some servers will be interested in proving the token&#8217;s provenance over time, which they do today by storing cookies with signed values. Since storing a signed value directly is impossible in a client-controlled world, servers can instead store a <samp>key</samp>, which is used to sign outgoing requests.  Since this key is never exposed directly to the web, it provides a reasonable guarantee of client stability over time which a server can rely upon when making risk judgements.</p>
-<h1 id="rfc.section.7.3"><a href="#rfc.section.7.3">7.3.</a> <a href="#user-control" id="user-control">User Control</a></h1>
+<h1 id="rfc.section.7.3">
+<a href="#rfc.section.7.3">7.3.</a> <a href="#user-control" id="user-control">User Control</a>
+</h1>
 <p id="rfc.section.7.3.p.1">User agents MUST provide users with the ability to control the creation and distribution of HTTP State Tokens, just as they do for cookies today. This certainly means providing controls over first- vs third-party distribution, control over the origins which can store state, control over the state presented to origins, visibility into the state of the user agent&#8217;s token store, and etc.</p>
 <p id="rfc.section.7.3.p.2">Further, this document grants user agents wide latitude to experiment with various distribution policies and limitations. The capabilities offered by <samp>delivery</samp> and <samp>max-age</samp> should be considered upper bounds on distribution, within which user agents are free to roam.</p>
-<h1 id="rfc.section.7.4"><a href="#rfc.section.7.4">7.4.</a> <a href="#lifetime" id="lifetime">Lifetime</a></h1>
+<h1 id="rfc.section.7.4">
+<a href="#rfc.section.7.4">7.4.</a> <a href="#lifetime" id="lifetime">Lifetime</a>
+</h1>
 <p id="rfc.section.7.4.p.1">By default, HTTP State Tokens live for an hour, which is a compromise between the reasonable desire of servers to maintain state across a given user&#8217;s session, and the privacy risks associated with long-lived tokens stored on a user&#8217;s disk.</p>
 <p id="rfc.section.7.4.p.2">Servers that desire a longer session lifetime can explicitly request an extension, which the browser can choose to act on.</p>
-<h1 id="rfc.section.7.5"><a href="#rfc.section.7.5">7.5.</a> <a href="#ambient-authority-and-cross-site-delivery" id="ambient-authority-and-cross-site-delivery">Ambient Authority and Cross-Site Delivery</a></h1>
-<p id="rfc.section.7.5.p.1">HTTP State Tokens, like cookies, provide a form of ambient authority (see Section 8.2 of <a href="#RFC6265">[RFC6265]</a>). By default, this authority is limited to requests initiated by same-site actors, which serves as a reasonable mitigation against some classes of attack (e.g. <samp>https://evil.com/</samp> making authenticated requests to <samp>https://example.com/</samp>).</p>
+<h1 id="rfc.section.7.5">
+<a href="#rfc.section.7.5">7.5.</a> <a href="#ambient-authority-and-cross-site-delivery" id="ambient-authority-and-cross-site-delivery">Ambient Authority and Cross-Site Delivery</a>
+</h1>
+<p id="rfc.section.7.5.p.1">HTTP State Tokens, like cookies, provide a form of ambient authority (see Section 8.2 of <a href="#RFC6265" class="xref">[RFC6265]</a>). By default, this authority is limited to requests initiated by same-site actors, which serves as a reasonable mitigation against some classes of attack (e.g. <samp>https://evil.com/</samp> making authenticated requests to <samp>https://example.com/</samp>).</p>
 <p id="rfc.section.7.5.p.2">Servers that desire to interact in an authenticated manner in cross-site contexts are required to opt-into doing so by delivering an appropriate <samp>delivery</samp> value in a <samp>Sec-HTTP-State-Options</samp> response header. Servers which choose to do so SHOULD take reasonable precautions, implementing CSRF tokens for sensitive actions, and taking stock of the context from which a given request is initiated (by examining incoming <samp>Referrer</samp>, <samp>Origin</samp>, and <samp>Sec-Fetch-Site</samp> headers).</p>
 <p id="rfc.section.7.5.p.3">Further, tokens can only be created in same-origin or same-site contexts, which means that cross-site identifier would only be available after the relevant origin was visited in a same-site context, and explicitly declared its tokens as being deliverable cross-site (at which point the user agent is empowered to make some decisions about how to handle that declaration).</p>
-<h1 id="rfc.section.8"><a href="#rfc.section.8">8.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a></h1>
-<h1 id="rfc.section.8.1"><a href="#rfc.section.8.1">8.1.</a> <a href="#header-field-registry" id="header-field-registry">Header Field Registry</a></h1>
-<p id="rfc.section.8.1.p.1">This document registers the <samp>Sec-Http-State</samp> and <samp>Sec-Http-State-Options</samp> header fields in the &#8220;Permanent Message Header Field Names&#8221; registry located at <a href="https://www.iana.org/assignments/message-headers">https://www.iana.org/assignments/message-headers</a>.</p>
-<h1 id="rfc.section.8.1.1"><a href="#rfc.section.8.1.1">8.1.1.</a> <a href="#sec-http-state-header-field" id="sec-http-state-header-field">Sec-Http-State Header Field</a></h1>
-<p/>
-
-<dl>
-  <dt>Header field name:</dt>
-  <dd style="margin-left: 8">Sec-Http-State</dd>
-  <dt>Applicable protocol:</dt>
-  <dd style="margin-left: 8">http</dd>
-  <dt>Status:</dt>
-  <dd style="margin-left: 8">experimental</dd>
-  <dt>Author/Change controller:</dt>
-  <dd style="margin-left: 8">IETF</dd>
-  <dt>Specification document(s):</dt>
-  <dd style="margin-left: 8">This document (see <a href="#sec-http-state">Section 4.1</a>)</dd>
-  <dt>Related information:</dt>
-  <dd style="margin-left: 8">(empty)</dd>
-</dl>
-<h1 id="rfc.section.8.1.2"><a href="#rfc.section.8.1.2">8.1.2.</a> <a href="#sec-http-state-options-header-field" id="sec-http-state-options-header-field">Sec-Http-State-Options Header Field</a></h1>
-<p/>
-
-<dl>
-  <dt>Header field name:</dt>
-  <dd style="margin-left: 8">Sec-Http-State-Options</dd>
-  <dt>Applicable protocol:</dt>
-  <dd style="margin-left: 8">http</dd>
-  <dt>Status:</dt>
-  <dd style="margin-left: 8">experimental</dd>
-  <dt>Author/Change controller:</dt>
-  <dd style="margin-left: 8">IETF</dd>
-  <dt>Specification document(s):</dt>
-  <dd style="margin-left: 8">This document (see <a href="#sec-http-state-options">Section 4.2</a>)</dd>
-  <dt>Related information:</dt>
-  <dd style="margin-left: 8">(empty)</dd>
-</dl>
-<h1 id="rfc.references"><a href="#rfc.references">9.</a> References</h1>
-<h1 id="rfc.references.1"><a href="#rfc.references.1">9.1.</a> Normative References</h1>
-<table>
-  <tbody>
-    <tr>
-      <td class="reference">
-        <b id="Fetch">[Fetch]</b>
-      </td>
-      <td class="top"><a title="Mozilla">van Kesteren, A.</a>, "<a href="https://fetch.spec.whatwg.org/">Fetch</a>", n.d..</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</b>
-      </td>
-      <td class="top"><a>Nottingham, M.</a> and <a>P. Kamp</a>, "<a href="http://tools.ietf.org/html/draft-ietf-httpbis-header-structure-09">Structured Headers for HTTP</a>", Internet-Draft draft-ietf-httpbis-header-structure-09, December 2018.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="I-D.yasskin-http-origin-signed-responses">[I-D.yasskin-http-origin-signed-responses]</b>
-      </td>
-      <td class="top"><a>Yasskin, J.</a>, "<a href="http://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses-05">Signed HTTP Exchanges</a>", Internet-Draft draft-yasskin-http-origin-signed-responses-05, January 2019.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="Mixed-Content">[Mixed-Content]</b>
-      </td>
-      <td class="top"><a title="Google">West, M.</a>, "<a href="https://w3c.github.io/webappsec-mixed-content/">Mixed Content</a>", n.d..</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC2104">[RFC2104]</b>
-      </td>
-      <td class="top"><a>Krawczyk, H.</a>, <a>Bellare, M.</a> and <a>R. Canetti</a>, "<a href="http://tools.ietf.org/html/rfc2104">HMAC: Keyed-Hashing for Message Authentication</a>", RFC 2104, DOI 10.17487/RFC2104, February 1997.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC2119">[RFC2119]</b>
-      </td>
-      <td class="top"><a>Bradner, S.</a>, "<a href="http://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC4648">[RFC4648]</b>
-      </td>
-      <td class="top"><a>Josefsson, S.</a>, "<a href="http://tools.ietf.org/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>", RFC 4648, DOI 10.17487/RFC4648, October 2006.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC5234">[RFC5234]</b>
-      </td>
-      <td class="top"><a>Crocker, D.</a> and <a>P. Overell</a>, "<a href="http://tools.ietf.org/html/rfc5234">Augmented BNF for Syntax Specifications: ABNF</a>", STD 68, RFC 5234, DOI 10.17487/RFC5234, January 2008.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC7230">[RFC7230]</b>
-      </td>
-      <td class="top"><a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="http://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC7409">[RFC7409]</b>
-      </td>
-      <td class="top"><a>Haleplidis, E.</a> and <a>J. Halpern</a>, "<a href="http://tools.ietf.org/html/rfc7409">Forwarding and Control Element Separation (ForCES) Packet Parallelization</a>", RFC 7409, DOI 10.17487/RFC7409, November 2014.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC8174">[RFC8174]</b>
-      </td>
-      <td class="top"><a>Leiba, B.</a>, "<a href="http://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
-    </tr>
-  </tbody>
-</table>
-<h1 id="rfc.references.2"><a href="#rfc.references.2">9.2.</a> Informative References</h1>
-<table>
-  <tbody>
-    <tr>
-      <td class="reference">
-        <b id="I-D.abarth-cake">[I-D.abarth-cake]</b>
-      </td>
-      <td class="top"><a>Barth, A.</a>, "<a href="http://tools.ietf.org/html/draft-abarth-cake-01">Origin Cookies</a>", Internet-Draft draft-abarth-cake-01, March 2011.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="I-D.ietf-cbor-cddl">[I-D.ietf-cbor-cddl]</b>
-      </td>
-      <td class="top"><a>Birkholz, H.</a>, <a>Vigano, C.</a> and <a>C. Bormann</a>, "<a href="http://tools.ietf.org/html/draft-ietf-cbor-cddl-08">Concise data definition language (CDDL): a notational convention to express CBOR and JSON data structures</a>", Internet-Draft draft-ietf-cbor-cddl-08, March 2019.</td>
-    </tr>
-    <tr>
-      <td class="reference">
-        <b id="RFC6265">[RFC6265]</b>
-      </td>
-      <td class="top"><a>Barth, A.</a>, "<a href="http://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a>", RFC 6265, DOI 10.17487/RFC6265, April 2011.</td>
-    </tr>
-  </tbody>
-</table>
-<h1 id="rfc.appendix.A"><a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a></h1>
-<p id="rfc.section.A.p.1">This document owes much to Adam Barth&#8217;s <a href="#I-D.abarth-cake">[I-D.abarth-cake]</a> and <a href="#RFC6265">[RFC6265]</a>.</p>
-<h1 id="rfc.appendix.B"><a href="#rfc.appendix.B">Appendix B.</a> <a href="#changes" id="changes">Changes</a></h1>
-<p>
-  <em>RFC Editor: Please remove this section before publication.</em>
-</p>
-<h1 id="rfc.appendix.B.1"><a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-the-beginning-of-time" id="since-the-beginning-of-time">Since the beginning of time</a></h1>
-<p/>
-
-<ul>
-  <li>This document was created.</li>
-</ul>
-<h1 id="rfc.authors">
-  <a href="#rfc.authors">Author's Address</a>
+<h1 id="rfc.section.8">
+<a href="#rfc.section.8">8.</a> <a href="#iana-considerations" id="iana-considerations">IANA Considerations</a>
 </h1>
+<h1 id="rfc.section.8.1">
+<a href="#rfc.section.8.1">8.1.</a> <a href="#header-field-registry" id="header-field-registry">Header Field Registry</a>
+</h1>
+<p id="rfc.section.8.1.p.1">This document registers the <samp>Sec-Http-State</samp> and <samp>Sec-Http-State-Options</samp> header fields in the &#8220;Permanent Message Header Field Names&#8221; registry located at <a href="https://www.iana.org/assignments/message-headers">https://www.iana.org/assignments/message-headers</a>.</p>
+<h1 id="rfc.section.8.1.1">
+<a href="#rfc.section.8.1.1">8.1.1.</a> <a href="#sec-http-state-header-field" id="sec-http-state-header-field">Sec-Http-State Header Field</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Header field name:</dt>
+<dd style="margin-left: 8">Sec-Http-State</dd>
+<dt>Applicable protocol:</dt>
+<dd style="margin-left: 8">http</dd>
+<dt>Status:</dt>
+<dd style="margin-left: 8">experimental</dd>
+<dt>Author/Change controller:</dt>
+<dd style="margin-left: 8">IETF</dd>
+<dt>Specification document(s):</dt>
+<dd style="margin-left: 8">This document (see <a href="#sec-http-state" class="xref">Section 4.1</a>)</dd>
+<dt>Related information:</dt>
+<dd style="margin-left: 8">(empty)</dd>
+</dl>
+<h1 id="rfc.section.8.1.2">
+<a href="#rfc.section.8.1.2">8.1.2.</a> <a href="#sec-http-state-options-header-field" id="sec-http-state-options-header-field">Sec-Http-State-Options Header Field</a>
+</h1>
+<p></p>
+
+<dl>
+<dt>Header field name:</dt>
+<dd style="margin-left: 8">Sec-Http-State-Options</dd>
+<dt>Applicable protocol:</dt>
+<dd style="margin-left: 8">http</dd>
+<dt>Status:</dt>
+<dd style="margin-left: 8">experimental</dd>
+<dt>Author/Change controller:</dt>
+<dd style="margin-left: 8">IETF</dd>
+<dt>Specification document(s):</dt>
+<dd style="margin-left: 8">This document (see <a href="#sec-http-state-options" class="xref">Section 4.2</a>)</dd>
+<dt>Related information:</dt>
+<dd style="margin-left: 8">(empty)</dd>
+</dl>
+<h1 id="rfc.references">
+<a href="#rfc.references">9.</a> References</h1>
+<h1 id="rfc.references.1">
+<a href="#rfc.references.1">9.1.</a> Normative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="Fetch">[Fetch]</b></td>
+<td class="top">
+<a title="Mozilla">van Kesteren, A.</a>, "<a href="https://fetch.spec.whatwg.org/">Fetch</a>", n.d..</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.ietf-httpbis-header-structure">[I-D.ietf-httpbis-header-structure]</b></td>
+<td class="top">
+<a>Nottingham, M.</a> and <a>P. Kamp</a>, "<a href="https://tools.ietf.org/html/draft-ietf-httpbis-header-structure-09">Structured Headers for HTTP</a>", Internet-Draft draft-ietf-httpbis-header-structure-09, December 2018.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.yasskin-http-origin-signed-responses">[I-D.yasskin-http-origin-signed-responses]</b></td>
+<td class="top">
+<a>Yasskin, J.</a>, "<a href="https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses-05">Signed HTTP Exchanges</a>", Internet-Draft draft-yasskin-http-origin-signed-responses-05, January 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="Mixed-Content">[Mixed-Content]</b></td>
+<td class="top">
+<a title="Google">West, M.</a>, "<a href="https://w3c.github.io/webappsec-mixed-content/">Mixed Content</a>", n.d..</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2104">[RFC2104]</b></td>
+<td class="top">
+<a>Krawczyk, H.</a>, <a>Bellare, M.</a> and <a>R. Canetti</a>, "<a href="https://tools.ietf.org/html/rfc2104">HMAC: Keyed-Hashing for Message Authentication</a>", RFC 2104, DOI 10.17487/RFC2104, February 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC2119">[RFC2119]</b></td>
+<td class="top">
+<a>Bradner, S.</a>, "<a href="https://tools.ietf.org/html/rfc2119">Key words for use in RFCs to Indicate Requirement Levels</a>", BCP 14, RFC 2119, DOI 10.17487/RFC2119, March 1997.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC4648">[RFC4648]</b></td>
+<td class="top">
+<a>Josefsson, S.</a>, "<a href="https://tools.ietf.org/html/rfc4648">The Base16, Base32, and Base64 Data Encodings</a>", RFC 4648, DOI 10.17487/RFC4648, October 2006.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC5234">[RFC5234]</b></td>
+<td class="top">
+<a>Crocker, D.</a> and <a>P. Overell</a>, "<a href="https://tools.ietf.org/html/rfc5234">Augmented BNF for Syntax Specifications: ABNF</a>", STD 68, RFC 5234, DOI 10.17487/RFC5234, January 2008.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7230">[RFC7230]</b></td>
+<td class="top">
+<a>Fielding, R.</a> and <a>J. Reschke</a>, "<a href="https://tools.ietf.org/html/rfc7230">Hypertext Transfer Protocol (HTTP/1.1): Message Syntax and Routing</a>", RFC 7230, DOI 10.17487/RFC7230, June 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC7409">[RFC7409]</b></td>
+<td class="top">
+<a>Haleplidis, E.</a> and <a>J. Halpern</a>, "<a href="https://tools.ietf.org/html/rfc7409">Forwarding and Control Element Separation (ForCES) Packet Parallelization</a>", RFC 7409, DOI 10.17487/RFC7409, November 2014.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC8174">[RFC8174]</b></td>
+<td class="top">
+<a>Leiba, B.</a>, "<a href="https://tools.ietf.org/html/rfc8174">Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words</a>", BCP 14, RFC 8174, DOI 10.17487/RFC8174, May 2017.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.references.2">
+<a href="#rfc.references.2">9.2.</a> Informative References</h1>
+<table><tbody>
+<tr>
+<td class="reference"><b id="I-D.abarth-cake">[I-D.abarth-cake]</b></td>
+<td class="top">
+<a>Barth, A.</a>, "<a href="https://tools.ietf.org/html/draft-abarth-cake-01">Origin Cookies</a>", Internet-Draft draft-abarth-cake-01, March 2011.</td>
+</tr>
+<tr>
+<td class="reference"><b id="I-D.ietf-cbor-cddl">[I-D.ietf-cbor-cddl]</b></td>
+<td class="top">
+<a>Birkholz, H.</a>, <a>Vigano, C.</a> and <a>C. Bormann</a>, "<a href="https://tools.ietf.org/html/draft-ietf-cbor-cddl-08">Concise data definition language (CDDL): a notational convention to express CBOR and JSON data structures</a>", Internet-Draft draft-ietf-cbor-cddl-08, March 2019.</td>
+</tr>
+<tr>
+<td class="reference"><b id="RFC6265">[RFC6265]</b></td>
+<td class="top">
+<a>Barth, A.</a>, "<a href="https://tools.ietf.org/html/rfc6265">HTTP State Management Mechanism</a>", RFC 6265, DOI 10.17487/RFC6265, April 2011.</td>
+</tr>
+</tbody></table>
+<h1 id="rfc.appendix.A">
+<a href="#rfc.appendix.A">Appendix A.</a> <a href="#acknowledgements" id="acknowledgements">Acknowledgements</a>
+</h1>
+<p id="rfc.section.A.p.1">This document owes much to Adam Barth&#8217;s <a href="#I-D.abarth-cake" class="xref">[I-D.abarth-cake]</a> and <a href="#RFC6265" class="xref">[RFC6265]</a>.</p>
+<h1 id="rfc.appendix.B">
+<a href="#rfc.appendix.B">Appendix B.</a> <a href="#changes" id="changes">Changes</a>
+</h1>
+<p><em>RFC Editor: Please remove this section before publication.</em></p>
+<h1 id="rfc.appendix.B.1">
+<a href="#rfc.appendix.B.1">B.1.</a> <a href="#since-the-beginning-of-time" id="since-the-beginning-of-time">Since the beginning of time</a>
+</h1>
+<p></p>
+
+<ul><li>This document was created.</li></ul>
+<h1 id="rfc.authors"><a href="#rfc.authors">Author's Address</a></h1>
 <div class="avoidbreak">
   <address class="vcard">
 	<span class="vcardline">
