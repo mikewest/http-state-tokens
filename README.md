@@ -78,14 +78,17 @@ This identifier acts more or less like a client-controlled cookie, with a few no
 2.  The token will only be available to the network layer, not to JavaScript (including network-like
     JavaScript, such as Service Workers).
 
-3.  The user agent will generate only one 256-bit token per origin, and will only expose the token to
-    the origin for which it was generated.
+3.  The user agent will generate only one token per origin, and will only expose the token to the
+    origin for which it was generated.
 
 4.  Tokens will not be generated for, or delivered to, non-secure origins.
 
-5.  Tokens will be delivered along with same-site requests by default.
+5.  Tokens will be delivered only along with same-site requests by default, and can only be created
+    from same-site contexts.
 
-6.  The token persists until it's reset by the server, user, or user agent.
+6.  Each token persists for one hour after generation by default. This default expiration time can
+    be overwritten by servers, and tokens can be reset at any time by servers, users, or user
+    agents.
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
@@ -105,18 +108,18 @@ following options come to mind:
     Sec-HTTP-State-Options: ..., delivery=same-origin, ...
     ```
 
-2.  Some servers will wish to limit the token's lifetime. We can allow them to set a TTL (in seconds):
+2.  Some servers will wish to limit the token's lifetime. We can allow them to set a `max-age` (in seconds):
 
     ```http
-    Sec-HTTP-State-Options: ..., ttl=3600, ...
+    Sec-HTTP-State-Options: ..., max-age=3600, ...
     ```
 
     After the time expires, the token's value will be automatically reset. Servers may also wish to
-    explicitly trigger the token's reset (upon signout, for example). Setting a TTL of 0 will do the
+    explicitly trigger the token's reset (upon signout, for example). Setting a `max-age` of 0 will do the
     trick:
 
     ```http
-    Sec-HTTP-State-Options: ..., ttl=0, ...
+    Sec-HTTP-State-Options: ..., max-age=0, ...
     ```
 
     In either case, currently-running pages can be notified of the user's state change in order to
