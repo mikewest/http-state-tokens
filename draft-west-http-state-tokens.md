@@ -32,6 +32,7 @@ normative:
   I-D.ietf-httpbis-header-structure:
   I-D.yasskin-http-origin-signed-responses:
   RFC2104:
+  RFC2109:
   RFC2119:
   RFC4648:
   Mixed-Content:
@@ -109,6 +110,42 @@ These distinctions might not be appropriate for all use cases, but seem like a r
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
 control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in 
 {{sec-http-state-options}}.
+
+## No. Really. We have cookies already. Why do we need this new thing?
+
+We do have cookies. And we've defined a number of extensions to cookies to blunt some of their
+sharper edges: the `HttpOnly` attribute, the `Secure` attribute, `SameSite`, prefixes like
+`__Host-` and `__Secure-`, and so on.
+
+Adoption of these features is quite low. Based on data gathered from Chrome's telemetry in
+March, 2019, cookies are set as follows:
+
+*   ~6.8% of cookies are set with `HttpOnly`.
+*   ~5.5% are set with `Secure`.
+*   ~3.1% are set with `HttpOnly; Secure`.
+*   ~0.06% are set with `SameSite=*; Secure`.
+*   ~0.05% are set with `SameSite=*`.
+*   ~0.03% are set with `HttpOnly; Secure; SameSite=*`.
+*   ~0.006% are set with `SameSite=*; HttpOnly`.
+*   ~0.005% are set with a `__Secure-` prefix.
+*   ~0.01% are set with a `__Host-` prefix.
+
+In total: 
+
+*  ~9.9% of cookies are marked as `HttpOnly`.
+*  ~8.8% of cookies are marked as `Secure`.
+*  ~0.1% of cookies are marked as `SameSite`.
+*  ~84.2% of cookies use none of these features.
+
+Given that `Secure` has been around since at least 1997 {{RFC2109}}; ~9% adoption after more than
+two decades is not inspiring.
+
+This document's core assumption is that it's going to be easier to teach developers about a crazy
+new thing that's secure by default than it would be to convince them to change their `Set-Cookie`
+headers to include `__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/`. A new thing resets
+expectations in a way that vastly exceeds the impact of explanations about the the four attributes
+that must be used, the one attribute that must not be used, and the weird naming convention that
+ought to be adopted. 
 
 ## Examples
 
