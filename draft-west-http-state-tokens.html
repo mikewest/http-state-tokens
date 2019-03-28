@@ -321,7 +321,7 @@ ul.toc li {
 
   <meta name="dct.creator" content="West, M." />
   <meta name="dct.identifier" content="urn:ietf:id:draft-west-http-state-tokens-latest" />
-  <meta name="dct.issued" scheme="ISO8601" content="2019-3-26" />
+  <meta name="dct.issued" scheme="ISO8601" content="2019-3-28" />
   <meta name="dct.abstract" content="This document describes a mechanism which allows HTTP servers to maintain stateful sessions with HTTP user agents. It aims to address some of the security and privacy considerations which have been identified in existing state management mechanisms, providing developers with a well-lit path towards our current understanding of best practice." />
   <meta name="description" content="This document describes a mechanism which allows HTTP servers to maintain stateful sessions with HTTP user agents. It aims to address some of the security and privacy considerations which have been identified in existing state management mechanisms, providing developers with a well-lit path towards our current understanding of best practice." />
 
@@ -342,10 +342,10 @@ ul.toc li {
 </tr>
 <tr>
   <td class="left">Intended status: Standards Track</td>
-  <td class="right">March 26, 2019</td>
+  <td class="right">March 28, 2019</td>
 </tr>
 <tr>
-  <td class="left">Expires: September 27, 2019</td>
+  <td class="left">Expires: September 29, 2019</td>
   <td class="right"></td>
 </tr>
 
@@ -366,7 +366,7 @@ ul.toc li {
 <p>This Internet-Draft is submitted in full conformance with the provisions of BCP 78 and BCP 79.</p>
 <p>Internet-Drafts are working documents of the Internet Engineering Task Force (IETF).  Note that other groups may also distribute working documents as Internet-Drafts.  The list of current Internet-Drafts is at http://datatracker.ietf.org/drafts/current/.</p>
 <p>Internet-Drafts are draft documents valid for a maximum of six months and may be updated, replaced, or obsoleted by other documents at any time.  It is inappropriate to use Internet-Drafts as reference material or to cite them other than as "work in progress."</p>
-<p>This Internet-Draft will expire on September 27, 2019.</p>
+<p>This Internet-Draft will expire on September 29, 2019.</p>
 <h1 id="rfc.copyrightnotice">
   <a href="#rfc.copyrightnotice">Copyright Notice</a>
 </h1>
@@ -434,8 +434,9 @@ ul.toc li {
 </ol>
 <p id="rfc.section.1.1.p.4">These distinctions might not be appropriate for all use cases, but seem like a reasonable set of defaults. For folks for whom these defaults aren&#8217;t good enough, we&#8217;ll provide developers with a few control points that can be triggered via a <samp>Sec-HTTP-State-Options</samp> HTTP response header, described in <a href="#sec-http-state-options">Section 4.2</a>.</p>
 <h1 id="rfc.section.1.2"><a href="#rfc.section.1.2">1.2.</a> <a href="#no-really-we-have-cookies-already-why-do-we-need-this-new-thing" id="no-really-we-have-cookies-already-why-do-we-need-this-new-thing">No. Really. We have cookies already. Why do we need this new thing?</a></h1>
-<p id="rfc.section.1.2.p.1">We do have cookies. And we&#8217;ve defined a number of extensions to cookies to blunt some of their sharper edges: the <samp>HttpOnly</samp> attribute, the <samp>Secure</samp> attribute, <samp>SameSite</samp>, prefixes like <samp>__Host-</samp> and <samp>__Secure-</samp>, and so on.</p>
-<p id="rfc.section.1.2.p.2">Adoption of these features is quite low. Based on data gathered from Chrome&#8217;s telemetry in March, 2019, cookies are set as follows:</p>
+<p id="rfc.section.1.2.p.1">We do have cookies. And we&#8217;ve defined a number of extensions to cookies to blunt some of their sharper edges: the <samp>HttpOnly</samp> attribute, the <samp>Secure</samp> attribute, <samp>SameSite</samp>, prefixes like <samp>__Host-</samp> and <samp>__Secure-</samp>, and so on. Isn&#8217;t that the right way forward? Shouldn&#8217;t we just push developers towards these existing flags on the existing state management primitive?</p>
+<p id="rfc.section.1.2.p.2">This document&#8217;s underlying assumption is that it&#8217;s going to be easier to teach developers about a crazy new thing that&#8217;s secure by default than it would be to convince them to change their <samp>Set-Cookie</samp> headers to include <samp>__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/</samp>. A new thing resets expectations in a way that vastly exceeds the impact of explanations about the the four attributes that must be used, the one attribute that must not be used, and the weird naming convention that ought to be adopted.</p>
+<p id="rfc.section.1.2.p.3">Moreover, it appears that we&#8217;re collectively pretty bad at helping developers understand the risks that might lead them to adopt The Good Cookie Syntax(tm) above. Adoption of these features has been quite slow. Based on data gathered from Chrome&#8217;s telemetry in March, 2019, cookies are set as follows:</p>
 <p/>
 
 <ul>
@@ -449,7 +450,7 @@ ul.toc li {
   <li>~0.005% are set with a <samp>__Secure-</samp> prefix.</li>
   <li>~0.01% are set with a <samp>__Host-</samp> prefix.</li>
 </ul>
-<p id="rfc.section.1.2.p.4">In total:</p>
+<p id="rfc.section.1.2.p.5">In total:</p>
 <p/>
 
 <ul>
@@ -458,8 +459,7 @@ ul.toc li {
   <li>~0.1% of cookies are marked as <samp>SameSite</samp>.</li>
   <li>~84.2% of cookies use none of these features.</li>
 </ul>
-<p id="rfc.section.1.2.p.6">Given that <samp>Secure</samp> has been around since at least 1997 <a href="#RFC2109">[RFC2109]</a>; ~9% adoption after more than two decades is not inspiring.</p>
-<p id="rfc.section.1.2.p.7">This document&#8217;s core assumption is that it&#8217;s going to be easier to teach developers about a crazy new thing that&#8217;s secure by default than it would be to convince them to change their <samp>Set-Cookie</samp> headers to include <samp>__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/</samp>. A new thing resets expectations in a way that vastly exceeds the impact of explanations about the the four attributes that must be used, the one attribute that must not be used, and the weird naming convention that ought to be adopted.</p>
+<p id="rfc.section.1.2.p.7">Given that <samp>Secure</samp> has been around since at least 1997 <a href="#RFC2109">[RFC2109]</a>; ~9% adoption after more than two decades is not inspiring.</p>
 <h1 id="rfc.section.1.3"><a href="#rfc.section.1.3">1.3.</a> <a href="#examples" id="examples">Examples</a></h1>
 <p id="rfc.section.1.3.p.1">User agents can deliver HTTP state tokens to a server in a <samp>Sec-Http-State</samp> header. For example, if a user agent has generated a token bound to <samp>https://example.com/</samp> whose base64 encoding is <samp>hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k=</samp> (<a href="#RFC4648">[RFC4648]</a>, Section 4), then it would generate the following header when delivering the token along with requests to <samp>https://example.com/</samp>:</p>
 <pre>

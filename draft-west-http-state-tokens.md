@@ -115,10 +115,20 @@ control points that can be triggered via a `Sec-HTTP-State-Options` HTTP respons
 
 We do have cookies. And we've defined a number of extensions to cookies to blunt some of their
 sharper edges: the `HttpOnly` attribute, the `Secure` attribute, `SameSite`, prefixes like
-`__Host-` and `__Secure-`, and so on.
+`__Host-` and `__Secure-`, and so on. Isn't that the right way forward? Shouldn't we just push
+developers towards these existing flags on the existing state management primitive?
 
-Adoption of these features is quite low. Based on data gathered from Chrome's telemetry in
-March, 2019, cookies are set as follows:
+This document's underlying assumption is that it's going to be easier to teach developers about a
+crazy new thing that's secure by default than it would be to convince them to change their
+`Set-Cookie` headers to include `__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/`. A new
+thing resets expectations in a way that vastly exceeds the impact of explanations about the the four
+attributes that must be used, the one attribute that must not be used, and the weird naming
+convention that ought to be adopted.
+
+Moreover, it appears that we're collectively pretty bad at helping developers understand the risks
+that might lead them to adopt The Good Cookie Syntax(tm) above. Adoption of these features has been
+quite slow. Based on data gathered from Chrome's telemetry in March, 2019, cookies are set as
+follows:
 
 *   ~6.8% of cookies are set with `HttpOnly`.
 *   ~5.5% are set with `Secure`.
@@ -140,12 +150,6 @@ In total:
 Given that `Secure` has been around since at least 1997 {{RFC2109}}; ~9% adoption after more than
 two decades is not inspiring.
 
-This document's core assumption is that it's going to be easier to teach developers about a crazy
-new thing that's secure by default than it would be to convince them to change their `Set-Cookie`
-headers to include `__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/`. A new thing resets
-expectations in a way that vastly exceeds the impact of explanations about the the four attributes
-that must be used, the one attribute that must not be used, and the weird naming convention that
-ought to be adopted. 
 
 ## Examples
 
