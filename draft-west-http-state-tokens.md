@@ -108,7 +108,7 @@ takes inspiration from some of cookies' optional characteristics. In particular:
 
 These distinctions might not be appropriate for all use cases, but seem like a reasonable set of
 defaults. For folks for whom these defaults aren't good enough, we'll provide developers with a few
-control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in 
+control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in
 {{sec-http-state-options}}.
 
 ## No. Really. We have cookies already. Why do we need this new thing?
@@ -140,7 +140,7 @@ follows:
 *   ~0.005% are set with a `__Secure-` prefix.
 *   ~0.01% are set with a `__Host-` prefix.
 
-In total: 
+In total:
 
 *  ~9.9% of cookies are marked as `HttpOnly`.
 *  ~8.8% of cookies are marked as `Secure`.
@@ -233,7 +233,7 @@ A request's delivery scope can be obtained as follows:
 
 User agents MUST keep a list of all the unexpired HTTP State Tokens which have been created. For the
 purposes of this document, we'll assume that user agents keep this list in the form of a map whose
-keys are origins, and whose values are HTTP State Tokens. 
+keys are origins, and whose values are HTTP State Tokens.
 
 This map exposes three functions:
 
@@ -262,7 +262,7 @@ to the following:
     *   `max-age`: 3600
     *   `value`: 256 cryptographically random bits.
 
-3.  Store `token` in the user agent's token store for `origin`. 
+3.  Store `token` in the user agent's token store for `origin`.
 
 4.  If the user agent has defined a `NotifyHostHTTPStateReset()` algorithm, call it with `origin`.
 
@@ -272,7 +272,7 @@ Note: Step 4 recognizes that user agents may wish to notify an origin's develope
 has been reset in order to enable cleanup of state stored client-side. HTML might, for instance,
 wish to post a message to a specially-named `BroadcastChannel` to enable this kind of work. This
 could take something like the following form:
-    
+
 ~~~ js
 let resetChannel = new BroadcastChannel('http-state-reset'));
 resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };
@@ -341,7 +341,7 @@ The dictionary MAY contain:
     ({{!I-D.ietf-httpbis-header-structure}}, Section 3.10) that encodes an key which can be used to
     generate a signature over outgoing requests.
 
-*   Exactly one member whose key is `delivery`, and whose value is one of the following tokens 
+*   Exactly one member whose key is `delivery`, and whose value is one of the following tokens
     ({{!I-D.ietf-httpbis-header-structure}}, Section 3.9): `same-origin`, `same-site`, or
     `cross-site`.
 
@@ -364,7 +364,7 @@ processing rules described in {{config}}.
 Some servers will require access to their tokens from cross-site contexts (perhaps to support
 authenticated activity or single-sign on, etc). These servers can request a `cross-site`
 delivery option by delivering the following header:
-    
+
 ~~~
 Sec-Http-State-Options: delivery=cross-site, ...
 ~~~
@@ -414,12 +414,12 @@ Sec-HTTP-State:
 Note: This part in particular is not fully baked, and we need to do some more work to flesh out
 the threat model (see also Token Binding). Look at it as an area to explore, not a solidly
 thought-out solution.
-    
+
 
 # Delivering HTTP State Tokens {#delivery}
 
 User agents deliver HTTP state tokens to servers by appending a `Sec-Http-State` header field to
-outgoing requests. 
+outgoing requests.
 
 This specification provides algorithms which are called at the appropriate points in {{Fetch}} in
 order to attach `Sec-Http-State` headers to outgoing requests, and to ensure that
@@ -473,7 +473,7 @@ of Section 4.5 of {{Fetch}}, describing the "HTTP-network-or-cache fetch" algori
 
 10. Append a header to `request`'s header list whose name is `Sec-Http-State`, and whose value is
     the result of serializing `header-value` ({{I-D.ietf-httpbis-header-structure}}, Section 4.1).
-  
+
 ## Generate a request's signature {#sign}
 
 If the origin server provides a `key`, the user agent will use it to sign any outgoing requests
@@ -488,7 +488,7 @@ Given a request, a base64-encoded token value, and a key:
 
 2.  Add an item to `cbor-request` which maps the byte string ':token' to the byte string containing
     the given base64-encoded token value.
-   
+
 3.  Return the result of computing HMAC-SHA256 {{!RFC2104}} over the canonical CBOR serialization of
     `cbor-request` (Section 3.4 of {{I-D.yasskin-http-origin-signed-responses}}), using the given
     `key`.
@@ -577,7 +577,7 @@ intended to be called after the `Set-Cookie` header is handled in step 11.4 of S
         Note that `max-age` is processed last, meaning that any other options specified alongside
         `max-age=0` will be de facto ignored as a new token is generated, replacing the old.
 
-    
+
 # Security and Privacy Considerations
 
 HTTP State Tokens aim to mitigate some of the security and privacy drawbacks that decades of
@@ -602,14 +602,14 @@ HTTP State Tokens improve upon cookies' weak confidentiality/integrity guarantee
     `https://bar.example.com/` cannot alter state on `https://foo.example.com/` without the latter's
     cooperation, and that the same applies to `https://example.com:8000/` and
     `https://example.com:80/`.
-    
+
     Note that this origin binding means that there are no path restrictions for tokens. Servers
     relying upon these tokens for state management SHOULD NOT run mutually distrusting services on
     different paths of the same origin.
 
 3.  User agents MUST NOT expose HTTP State Tokens to non-HTTP APIs which are web-accessible,
     thereby reducing the risk of accidental exposure via cross-site scripting attack.
-    
+
     Further, the `Sec-` prefix on both `Sec-HTTP-State` and `Sec-HTTP-State-Options` ensures that
     both are considered "forbidden header names" by {{Fetch}}. The latter should also be treated as
     a "forbidden response header".
@@ -652,7 +652,7 @@ can choose to act on.
 HTTP State Tokens, like cookies, provide a form of ambient authority (see Section 8.2 of
 {{RFC6265}}). By default, this authority is limited to requests initiated by same-site actors,
 which serves as a reasonable mitigation against some classes of attack (e.g. `https://evil.com/`
-making authenticated requests to `https://example.com/`). 
+making authenticated requests to `https://example.com/`).
 
 Servers that desire to interact in an authenticated manner in cross-site contexts are required to
 opt-into doing so by delivering an appropriate `delivery` value in a `Sec-HTTP-State-Options`
