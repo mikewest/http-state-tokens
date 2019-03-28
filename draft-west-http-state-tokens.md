@@ -212,7 +212,10 @@ the past.
 
 This document relies upon the definitions of "request" and "response" found in {{Fetch}}.
 
-A request's delivery scope can be obtained as follows:
+A request's delivery scope is `same-origin` if the request's initiator and target are exactly the
+same origin, `same-site` if the request's initiator and target are not same-origin but share a
+registrable domain (e.g. `https://www.example.com/` and `https://not-www.example.com/`), and
+`cross-site` otherwise. The following algorithm spells this relationship out more formally:
 
 1.  Let `request-origin` be the request's `origin`, and `target-origin` be the request's
     `URL`'s `origin`.
