@@ -1,5 +1,9 @@
 # Explainer: Tightening HTTP State Management
 
+**WIP specification**: https://mikewest.github.io/http-state-tokens/draft-west-http-state-tokens.html (_or on the IETF's servers at https://tools.ietf.org/html/draft-west-http-state-tokens-00, if you like pretending that web pages are paginated!_)
+
+-----
+
 Mike West, August 2018
 
 _©2018, Google, Inc. All rights reserved._
