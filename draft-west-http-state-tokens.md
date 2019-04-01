@@ -79,12 +79,12 @@ Servers can configure this token's characteristics via a `Sec-Http-State-Options
 
 That's it.
 
-## Wait. Don't we have cookies?
+## Wait. Don't we already have cookies?
 
-Cookies {{RFC6265}} are indeed a pervasive HTTP state management mechanism, and they enable
-practically everything interesting on the web today. That said, cookies have some issues:
-they're hard to use securely, they add substantial weight to users' outgoing requests, and they
-enable tracking users' activity across the web in potentially surprising ways.
+Cookies {{RFC6265}} are indeed a pervasive HTTP state management mechanism in the status quo, and
+they enable practically everything interesting on the web today. That said, cookies have some
+issues: they're hard to use securely, they add substantial weight to users' outgoing requests, and
+they enable tracking users' activity across the web in potentially surprising ways.
 
 The mechanism proposed in this document aims at a more minimal and opinionated construct which
 takes inspiration from some of cookies' optional characteristics. In particular:
@@ -99,8 +99,7 @@ takes inspiration from some of cookies' optional characteristics. In particular:
 
 4.  Tokens will not be generated for, or delivered to, non-secure origins.
 
-5.  Tokens will be delivered only along with same-site requests by default, and can only be created
-    from same-site contexts.
+5.  By default, token delivery and configuration is constrained to same-site requests.
 
 6.  Each token persists for one hour after generation by default. This default expiration time can
     be overwritten by servers, and tokens can be reset at any time by servers, users, or user
@@ -111,24 +110,18 @@ defaults. For folks for whom these defaults aren't good enough, we'll provide de
 control points that can be triggered via a `Sec-HTTP-State-Options` HTTP response header, described in
 {{sec-http-state-options}}.
 
-## No. Really. We have cookies already. Why do we need this new thing?
+## No. Really. We have cookies today. Why do we need this new thing?
 
 We do have cookies. And we've defined a number of extensions to cookies to blunt some of their
 sharper edges: the `HttpOnly` attribute, the `Secure` attribute, `SameSite`, prefixes like
-`__Host-` and `__Secure-`, and so on. Isn't that the right way forward? Shouldn't we just push
-developers towards these existing flags on the existing state management primitive?
+`__Host-` and `__Secure-`, and so on. It's reasonable to suggest that pushing developers towards
+these existing flags on our existing state management primitive is the right way forward.
 
-This document's underlying assumption is that it's going to be easier to teach developers about a
-crazy new thing that's secure by default than it would be to convince them to change their
-`Set-Cookie` headers to include `__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/`. A new
-thing resets expectations in a way that vastly exceeds the impact of explanations about the the four
-attributes that must be used, the one attribute that must not be used, and the weird naming
-convention that ought to be adopted.
-
-Moreover, it appears that we're collectively pretty bad at helping developers understand the risks
+A counterpoint is that we're collectively pretty bad at helping developers understand the risks
 that might lead them to adopt The Good Cookie Syntax(tm) above. Adoption of these features has been
-quite slow. Based on data gathered from Chrome's telemetry in March, 2019, cookies are set as
-follows:
+quite slow. The `Secure` flag, for example, has been around since at least 1997 {{RFC2109}}, and is
+hovering around 9% adoption based on data gathered from Chrome's telemetry in March, 2019. In that
+dataset, cookies' other properties are set as follows:
 
 *   ~6.8% of cookies are set with `HttpOnly`.
 *   ~5.5% are set with `Secure`.
@@ -147,9 +140,12 @@ In total:
 *  ~0.1% of cookies are marked as `SameSite`.
 *  ~84.2% of cookies use none of these features.
 
-Given that `Secure` has been around since at least 1997 {{RFC2109}}; ~9% adoption after more than
-two decades is not inspiring.
-
+This document's underlying assumption is that it's going to be easier to teach developers about a
+crazy new thing that's secure by default than it would be to convince them to change their
+`Set-Cookie` headers to be more like `__Host-name=value; HttpOnly; Secure; SameSite=Lax; Path=/`. A
+new thing resets expectations in a way that vastly exceeds the impact of explanations about the the
+four attributes that must be used, the one attribute that must not be used, and the weird naming
+convention that ought to be adopted.
 
 ## Examples
 
@@ -159,7 +155,7 @@ if a user agent has generated a token bound to `https://example.com/` whose base
 following header when delivering the token along with requests to `https://example.com/`:
 
 ~~~
-Sec-Http-State: token=*hB2RfWa...GyNko4k=*
+Sec-Http-State: token=*hB2RfWaGyNk60sjHze5DzGYjSnL7tRF2HWSBx6J1o4k*
 ~~~
 {: artwork-align="center"}
 
@@ -200,8 +196,8 @@ session with a specific origin, along with associated metadata:
     delivered. It is either null, or contains up to 256-bits of binary data. Unless otherwise
     specified, its value is null.
 
-*   `max-age` is a timestamp representing the token's lifetime in seconds. Unless otherwise
-    specified, HTTP State Tokens have a 3600 second (1 hour) `max-age`.
+*   `max-age` is a number representing the token's lifetime in seconds. Unless otherwise specified,
+    its value is `3600` (1 hour).
 
 *   `value` is the token's value (surprising, right?). It contains up to 256-bits of binary data.
 
@@ -217,12 +213,12 @@ same origin, `same-site` if the request's initiator and target are not same-orig
 registrable domain (e.g. `https://www.example.com/` and `https://not-www.example.com/`), and
 `cross-site` otherwise. The following algorithm spells this relationship out more formally:
 
-1.  Let `request-origin` be the request's `origin`, and `target-origin` be the request's
-    `URL`'s `origin`.
-
-2.  If the request was generated by the user agent as a response to direct user interaction with
+1.  If the request was generated by the user agent as a response to direct user interaction with
     the user agent (e.g. the user typed an address into the agent's address bar, clicked a bookmark,
     or etc.), return `same-origin`.
+
+2.  Let `request-origin` be the request's `origin`, and `target-origin` be the request's
+    `URL`'s `origin`.
 
 3.  If `request-origin` is same-origin with `target-origin`, return `same-origin`.
 
@@ -252,7 +248,7 @@ The map is initially empty.
 
 ### Generate an HTTP State Token for an origin {#generate}
 
-The user agent can generate a new HTTP State Token for an origin using an algorithm equivalent
+The user agent MUST generate a new HTTP State Token for an origin using an algorithm equivalent
 to the following:
 
 1.  Delete `origin` from the user agent's token store.
@@ -267,20 +263,10 @@ to the following:
 
 3.  Store `token` in the user agent's token store for `origin`.
 
-4.  If the user agent has defined a `NotifyHostHTTPStateReset()` algorithm, call it with `origin`.
+4.  If the user agent has defined a `NotifyHostHTTPStateReset(origin)` algorithm, call it with
+    `origin` (see {{notify-reset}} for more context on this step).
 
 5.  Return `token`.
-
-Note: Step 4 recognizes that user agents may wish to notify an origin's developers that HTTP state
-has been reset in order to enable cleanup of state stored client-side. HTML might, for instance,
-wish to post a message to a specially-named `BroadcastChannel` to enable this kind of work. This
-could take something like the following form:
-
-~~~ js
-let resetChannel = new BroadcastChannel('http-state-reset'));
-resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };
-~~~
-{: artwork-align="center"}
 
 
 # Syntax
@@ -669,6 +655,29 @@ context, and explicitly declared its tokens as being deliverable cross-site (at 
 user agent is empowered to make some decisions about how to handle that declaration).
 
 
+# Implementation Considerations
+
+## Notifying developers on token reset {#notify-reset}
+
+Step 4 of the token generation algorithm ({{generate}}) recognizes that user agents may wish to
+notify an origin's developers that HTTP state has been reset in order to enable cleanup of state
+stored client-side. Embedding environments are encouraged to define an implementation of the
+`NotifyHostHTTPStateReset(origin)` algorithm that's appropriate for the environment.
+
+For example, HTML may wish to enable developers to respond to token generation by posting a message
+to a specially-named `BroadcastChannel` for the to enable this kind of work:
+
+~~~ js
+let resetChannel = new BroadcastChannel('http-state-reset'));
+resetChannel.onmessage = e => { /* Do exciting cleanup here. */ };
+~~~
+{: artwork-align="center"}
+
+This algorithm could take something like the following form:
+
+TODO(mkwst): Write a reasonable implementation of this once I have internet again.
+
+
 # IANA Considerations
 
 ## Header Field Registry
@@ -739,6 +748,9 @@ This document owes much to Adam Barth's {{I-D.abarth-cake}} and {{RFC6265}}.
 
 _RFC Editor: Please remove this section before publication._
 
-## Since the beginning of time
+*   -01
+    *   General editorial cleanup.
+    *   Explanation of `NotifyHostHTTPStateReset(origin)` algorithm in {{notify-reset}}.
 
-*   This document was created.
+*   -00
+    *   This document was created.
