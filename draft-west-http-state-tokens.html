@@ -663,7 +663,7 @@ Sec-Http-State-Options: key=*ZH0GxtBMWA...nJudhZ8dtz*, ...
 <pre>
 Sec-HTTP-State:
     token=*J6BRKa...MonM*,
-    sig=*(HMAC-SHA265(key, token+metadata))*
+    sig=*(HMAC-SHA256(key, token+metadata))*
 </pre>
 <p id="rfc.section.4.2.1.3.p.3">Note: This part in particular is not fully baked, and we need to do some more work to flesh out the threat model (see also Token Binding). Look at it as an area to explore, not a solidly thought-out solution.</p>
 <h1 id="rfc.section.5">

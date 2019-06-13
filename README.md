@@ -150,7 +150,7 @@ following options come to mind:
     mitigates the risk of token capture:
 
     ```http
-    Sec-HTTP-State: token=*J6BRKa...MonM*, sig=*(HMAC-SHA265(key, token+metadata))*
+    Sec-HTTP-State: token=*J6BRKa...MonM*, sig=*(HMAC-SHA256(key, token+metadata))*
     ```
 
     For instance, signing the entire request using the format that [Signed Exchanges](https://tools.ietf.org/html/draft-yasskin-http-origin-signed-responses) have defined
