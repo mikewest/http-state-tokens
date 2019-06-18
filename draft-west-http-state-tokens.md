@@ -396,7 +396,7 @@ mitigates the risk of token capture:
 ~~~
 Sec-HTTP-State:
     token=*J6BRKa...MonM*,
-    sig=*(HMAC-SHA265(key, token+metadata))*
+    sig=*(HMAC-SHA256(key, token+metadata))*
 ~~~
 {: artwork-align="center"}
 
