@@ -633,7 +633,7 @@ By default, HTTP State Tokens live for an hour, which is a compromise between th
 of servers to maintain state across a given user's session, and the privacy risks associated with
 long-lived tokens stored on a user's disk.
 
-Servers that desire a longer session lifetime can explicitly request an extension, which the browser
+Servers that desire a longer session lifetime can explicitly request an extension, which the user agent
 can choose to act on.
 
 ## Ambient Authority and Cross-Site Delivery
