@@ -628,7 +628,7 @@ Sec-Http-State-Options = sh-dictionary
 <ul>
 <li>Exactly one member whose key is <samp>key</samp>, and whose value is binary content (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.10) that encodes an key which can be used to generate a signature over outgoing requests.</li>
 <li>Exactly one member whose key is <samp>delivery</samp>, and whose value is one of the following tokens (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.9): <samp>same-origin</samp>, <samp>same-site</samp>, or <samp>cross-site</samp>.  <br><br> If the <samp>delivery</samp> member contains an unknown identifier, the member MUST be ignored.</li>
-<li>Exactly one member whose key is <samp>max-age</samp>, and whose value is an integer (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.6) representing the server&#8217;s desired lifetime for its HTTP State Token.  <br><br> If the <samp>max-age</samp> member contains anything other than a positive integer, the member MUST be ignored.</li>
+<li>Exactly one member whose key is <samp>max-age</samp>, and whose value is an integer (<a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>, Section 3.6) representing the server&#8217;s desired lifetime for its HTTP State Token.  <br><br> If the <samp>max-age</samp> member contains anything other than a nonnegative integer, the member MUST be ignored.</li>
 </ul>
 <p id="rfc.section.4.2.p.6">User agents will process the <samp>Sec-Http-State-Options</samp> header on incoming responses according to the processing rules described in <a href="#config" class="xref">Section 6</a>.</p>
 <h1 id="rfc.section.4.2.1">
@@ -755,7 +755,7 @@ Accept: */*
 <li>
 <samp>header</samp> has a member named <samp>delivery</samp> whose value is not one of the following tokens (Section 3.9 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>): &#8220;same-origin&#8221;, &#8220;same-site&#8221;, and &#8220;cross-site&#8221;.</li>
 <li>
-<samp>header</samp> has a member named <samp>max-age</samp> whose value is not a positive integer (Section 3.6 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>).</li>
+<samp>header</samp> has a member named <samp>max-age</samp> whose value is not a nonnegative integer (Section 3.6 of <a href="#I-D.ietf-httpbis-header-structure" class="xref">[I-D.ietf-httpbis-header-structure]</a>).</li>
 </ul>
 </li>
 <li>If <samp>header</samp> has a member named <samp>key</samp>, set <samp>token</samp>&#8217;s <samp>key</samp> to the member&#8217;s value.</li>

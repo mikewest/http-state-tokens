@@ -340,7 +340,7 @@ The dictionary MAY contain:
     ({{!I-D.ietf-httpbis-header-structure}}, Section 3.6) representing the server's desired lifetime
     for its HTTP State Token.
 
-    If the `max-age` member contains anything other than a positive integer, the member MUST be
+    If the `max-age` member contains anything other than a nonnegative integer, the member MUST be
     ignored.
 
 User agents will process the `Sec-Http-State-Options` header on incoming responses according to the
@@ -549,7 +549,7 @@ intended to be called after the `Set-Cookie` header is handled in step 11.4 of S
         *   `header` has a member named `delivery` whose value is not one of the following tokens
             (Section 3.9 of {{I-D.ietf-httpbis-header-structure}}): "same-origin", "same-site",
             and "cross-site".
-        *   `header` has a member named `max-age` whose value is not a positive integer (Section 3.6
+        *   `header` has a member named `max-age` whose value is not a nonnegative integer (Section 3.6
             of {{I-D.ietf-httpbis-header-structure}}).
 
     3.  If `header` has a member named `key`, set `token`'s `key` to the member's value.
